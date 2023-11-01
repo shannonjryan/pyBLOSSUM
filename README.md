@@ -71,6 +71,6 @@ python BLE_NNO.py filename
 where filename is a csv input file that lists experimental data for a specific Whipple shield configuration. An example input file, 'eval_example.csv' is provided in the 'data' directory. 
 
 The following files are output:
-1- a ballistic limit plot, saved to the 'plots' directory with 'plot' and the BLE used in the assessment appended to the input filename, e.g., 'plot-NNO-eval_example.png' for analysis of input file 'eval_example.csv' with the NNO BLE.
-2- the plot data is saved to the 'results' directory with 'plotdata' appended to the input filename, e.g., 'plotdata-NNO-eval_example.csv' for analysis of the input file 'eval_example.csv' with the NNO BLE.
-3- the critical projectile diameter, dc, calculated for each of the experimental data points. 'dc' is appended to the input data file and saved in the results directory with 'eval' appended to the input filename, e.g., 'eval-NNO-eval_example.csv' for analysis of the input file 'eval_example.csv' with the NNO BLE.
+1. A ballistic limit plot, saved to the 'plots' directory with 'plot' and the BLE used in the assessment appended to the input filename, e.g., 'plot-NNO-eval_example.png' for analysis of input file 'eval_example.csv' with the NNO BLE.
+2. The plot data is saved to the 'results' directory with 'plotdata' appended to the input filename, e.g., 'plotdata-NNO-eval_example.csv' for analysis of the input file 'eval_example.csv' with the NNO BLE.
+3. The critical projectile diameter, dc, calculated for each of the experimental data points. 'dc' is appended to the input data file and saved in the results directory with 'eval' appended to the input filename, e.g., 'eval-NNO-eval_example.csv' for analysis of the input file 'eval_example.csv' with the NNO BLE.
