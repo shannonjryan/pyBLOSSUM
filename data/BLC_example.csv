@@ -1,0 +1,2 @@
+﻿ref,proj_mat,proj_density,angle,bumper_mat,bumper_thick,bumper_density,standoff,wall_thick,wall_mat,wall_density,wall_yieldksi
+test,AA2017-T4,2.8,45,AA6061-T651,0.1,2.7,10,0.4,AA6061-T651,2.7,40

@@ -1,0 +1,4 @@
+source,site,shotID,proj_diam,proj_density,proj_mat,proj_mass,velocity,angle,bumper_mat,bumper_thick,bumper_density,standoff,wall_thick,wall_mat,wall_density,wall_yieldksi,result,perforated_class,dc_modNNO
+TP-2003-210788,JSC,A1467,0.3,2.796,AA2017-T4,0.03936,6.1,45,Not reported,0.203,2.713,1.98,0.203,AA6061-T6,2.796,36,NP,0,0.3398661979425376
+TP-2003-210788,JSC,A1466,0.281,2.796,AA2017-T4,0.03232,6.54,45,Not reported,0.203,2.713,1.98,0.203,AA6061-T6,2.713,36,NP,0,0.35787894613364296
+TP-2003-210788,JSC,A1468,0.318,2.796,AA2017-T4,0.04689,6.39,45,Not reported,0.203,2.713,1.98,0.203,AA6061-T6,2.796,36,P,1,0.35384953386681284
