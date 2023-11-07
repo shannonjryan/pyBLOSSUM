@@ -1,0 +1,28 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: pyBLOSSUM
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Shannon
+    family-names: Ryan
+    email: shannon.ryan@deakin.edu.au
+    orcid: 'https://orcid.org/0000-0003-3883-7757'
+    affiliation: Deakin University
+repository-code: 'https://github.com/shannonjryan/pyBLOSSUM'
+abstract: >-
+  This library provides ballistic limit equations (BLEs) for
+  calculating the performance of spacecraft structures under
+  impact by micrometeoroid and orbital debris (MMOD)
+  particles at hypervelocity.
+keywords:
+  - Space debris
+  - Ballistic limit equation
+  - Hypervelocity
+  - Micrometeoroid and orbital debris
+  - Risk assessment
+license: MIT
