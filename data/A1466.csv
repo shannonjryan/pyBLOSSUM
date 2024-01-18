@@ -1,3 +1,3 @@
 ﻿ref,proj_mat,proj_density,angle,bumper_mat,bumper_thick,bumper_density,standoff,wall_thick,wall_mat,wall_density,wall_yield
 -,-,g/cm3,deg,-,cm,g/cm3,cm,cm,-,g/cm3,ksi
-test,AA2017-T4,2.8,45,AA6061-T651,0.1,2.7,10,0.4,AA6061-T651,2.7,40
+test,AA2017-T4,2.8,45,Al6061T6,0.203,2.7,1.98,0.203,Al6061T6,2.7,36
