@@ -44,10 +44,10 @@ def reimerdes_performance(row):
     if vn <= vLV:  # low velocity regime
         dc = ((row['wall_thick']/K+row['bumper_thick'])/(0.796*Kinf*row['proj_density']**0.518*vn**(2/3)))**(18/19)
     elif vn >= vHV:  # hypervelocity regime
-        dc = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yieldksi'],row['proj_density'],row['bumper_density'],anglerad,row['velocity'],vHV)
+        dc = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yield'],row['proj_density'],row['bumper_density'],anglerad,row['velocity'],vHV)
     else:  # shatter regime
         dcLV = ((row['wall_thick']/K+row['bumper_thick'])/(0.796*Kinf*row['proj_density']**0.518*vLV**(2/3)))**(18/19)
-        dcHV = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yieldksi'],row['proj_density'],row['bumper_density'],anglerad,vHV/np.cos(anglerad),vHV)
+        dcHV = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yield'],row['proj_density'],row['bumper_density'],anglerad,vHV/np.cos(anglerad),vHV)
         dc = dcLV+(dcHV-dcLV)/(vHV/np.cos(anglerad)-vLV/np.cos(anglerad))*(row['velocity']-vLV/np.cos(anglerad))        
 
     return dc

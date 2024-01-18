@@ -32,15 +32,15 @@ def modNNO_performance(row):
     
     ## calculate the ballistic limit
     if row['velocity'] <= vLV:  # low velocity regime
-         dc = kl*(row['wall_thick']*(row['wall_yieldksi']/40)**0.5+0.37*row['bumper_thick']*row['bumper_density'])/ \
+         dc = kl*(row['wall_thick']*(row['wall_yield']/40)**0.5+0.37*row['bumper_thick']*row['bumper_density'])/ \
              ((np.cos(anglerad))**(11/6)*row['proj_density']**0.5*row['velocity']**(2/3))             
     elif row['velocity'] >= vHV:  # hypervelocity regime
-        dc = kh*(row['wall_thick']*row['wall_density'])**(2/3)*row['standoff']**(1/2)*(row['wall_yieldksi']/70)**(1/3)/ \
+        dc = kh*(row['wall_thick']*row['wall_density'])**(2/3)*row['standoff']**(1/2)*(row['wall_yield']/70)**(1/3)/ \
             (row['proj_density']**(1/3)*row['bumper_density']**(1/9)*(row['velocity']*np.cos(anglerad))**(2/3))
     else:  # shatter regime
-        dcLV = kl*(row['wall_thick']*(row['wall_yieldksi']/40)**0.5+0.37*row['bumper_thick']*row['bumper_density'])/ \
+        dcLV = kl*(row['wall_thick']*(row['wall_yield']/40)**0.5+0.37*row['bumper_thick']*row['bumper_density'])/ \
             ((np.cos(anglerad))**(11/6)*row['proj_density']**0.5*vLV**(2/3))  
-        dcHV = kh*(row['wall_thick']*row['wall_density'])**(2/3)*row['standoff']**(1/2)*(row['wall_yieldksi']/70)**(1/3)/ \
+        dcHV = kh*(row['wall_thick']*row['wall_density'])**(2/3)*row['standoff']**(1/2)*(row['wall_yield']/70)**(1/3)/ \
             (row['proj_density']**(1/3)*row['bumper_density']**(1/9)*(vHV*np.cos(anglerad))**(2/3))
         dc = dcLV+(dcHV-dcLV)/(vHV-vLV)*(row['velocity']-vLV)
 

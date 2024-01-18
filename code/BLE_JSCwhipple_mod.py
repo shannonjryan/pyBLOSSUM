@@ -34,17 +34,17 @@ def JSCwhipple_performance_mod(row):
     row['angle'] = 65 if row['angle'] > 65 else row['angle']
     anglerad = np.deg2rad(row['angle'])
     vn = row['velocity'] * np.cos(anglerad)     # Normalized impact velocity
-    vLV = vLV_solve_piek(row['bumper_thick'],row['wall_thick'],row['proj_density'],row['wall_yieldksi'],anglerad)
+    vLV = vLV_solve_piek(row['bumper_thick'],row['wall_thick'],row['proj_density'],row['wall_yield'],anglerad)
     vHV = 7
 
     ## calculate the ballistic limit
     if vn <= vLV:  # low velocity regime
-        dc = ((row['wall_thick']*(row['wall_yieldksi']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*row['velocity']**(2/3)))**(18/19)
+        dc = ((row['wall_thick']*(row['wall_yield']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*row['velocity']**(2/3)))**(18/19)
     elif vn >= vHV:  # hypervelocity regime
-        dc = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yieldksi'],row['proj_density'],row['bumper_density'],anglerad,row['velocity'])
+        dc = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yield'],row['proj_density'],row['bumper_density'],anglerad,row['velocity'])
     else:  # shatter regime
-        dcLV = ((row['wall_thick']*(row['wall_yieldksi']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*(vLV/np.cos(anglerad))**(2/3)))**(18/19)
-        dcHV = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yieldksi'],row['proj_density'],row['bumper_density'],anglerad,vHV/np.cos(anglerad))
+        dcLV = ((row['wall_thick']*(row['wall_yield']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*(vLV/np.cos(anglerad))**(2/3)))**(18/19)
+        dcHV = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yield'],row['proj_density'],row['bumper_density'],anglerad,vHV/np.cos(anglerad))
         dc = dcLV+(dcHV-dcLV)/(vHV/np.cos(anglerad)-vLV/np.cos(anglerad))*(row['velocity']-vLV/np.cos(anglerad))        
 
     return dc

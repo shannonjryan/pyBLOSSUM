@@ -26,12 +26,12 @@ def NNO_performance(row):
     vn = row['velocity']*np.cos(anglerad)
     
     if vn <= vLV:  # low velocity regime
-         dc = ((row['wall_thick']*(row['wall_yieldksi']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*row['velocity']**(2/3)))**(18/19)
+         dc = ((row['wall_thick']*(row['wall_yield']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*row['velocity']**(2/3)))**(18/19)
     elif vn >= vHV:  # hypervelocity regime
-        dc = 3.918*row['wall_thick']**(2/3)*row['standoff']**(1/3)*(row['wall_yieldksi']/70)**(1/3)/(row['proj_density']**(1/3)*row['bumper_density']**(1/9)*(row['velocity']*np.cos(anglerad))**(2/3))
+        dc = 3.918*row['wall_thick']**(2/3)*row['standoff']**(1/3)*(row['wall_yield']/70)**(1/3)/(row['proj_density']**(1/3)*row['bumper_density']**(1/9)*(row['velocity']*np.cos(anglerad))**(2/3))
     else:  # shatter regime
-        dcLV = ((row['wall_thick']*(row['wall_yieldksi']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*(vLV/np.cos(anglerad))**(2/3)))**(18/19)
-        dcHV = 3.918*row['wall_thick']**(2/3)*row['standoff']**(1/3)*(row['wall_yieldksi']/70)**(1/3)/(row['proj_density']**(1/3)*row['bumper_density']**(1/9)*vHV**(2/3))
+        dcLV = ((row['wall_thick']*(row['wall_yield']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*(vLV/np.cos(anglerad))**(2/3)))**(18/19)
+        dcHV = 3.918*row['wall_thick']**(2/3)*row['standoff']**(1/3)*(row['wall_yield']/70)**(1/3)/(row['proj_density']**(1/3)*row['bumper_density']**(1/9)*vHV**(2/3))
         dc = dcLV+(dcHV-dcLV)/(vHV-vLV)*(row['velocity']*np.cos(anglerad)-vLV)
 
     return dc
@@ -48,7 +48,7 @@ def NNO_design(row):
 
     # sizing the shield
     tb = cb*row['proj_dia']*row['proj_density']/row['bumper_density']
-    tw = cw*row['proj_dia']**0.5*(row['proj_density']*row['bumper_density'])**(1/6)*(np.pi/6*row['proj_dia']**3*row['proj_density'])**(1/3)*(row['velocity']*np.cos(anglerad)/row['standoff']**0.5)*(70/row['wall_yieldksi'])**0.5
+    tw = cw*row['proj_dia']**0.5*(row['proj_density']*row['bumper_density'])**(1/6)*(np.pi/6*row['proj_dia']**3*row['proj_density'])**(1/3)*(row['velocity']*np.cos(anglerad)/row['standoff']**0.5)*(70/row['wall_yield'])**0.5
 
     t = [tb,tw]
 
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     V_plot = np.linspace(0.1,15,150)
     df_plot = pd.DataFrame()
     df_temp = pd.Series(df_data.iloc[0])
-    features = ['proj_mat','proj_density','angle','bumper_mat','bumper_thick','bumper_density','standoff','wall_thick','wall_mat','wall_density','wall_yieldksi']
+    features = ['proj_mat','proj_density','angle','bumper_mat','bumper_thick','bumper_density','standoff','wall_thick','wall_mat','wall_density','wall_yield']
     df_temp = df_temp[features]
     for vel in V_plot:
         df_temp['velocity'] = vel
