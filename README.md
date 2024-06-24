@@ -69,11 +69,11 @@ python BLEs/BLE_foamSP.py input_files/eval_example-foamSP.csv --data
 
 ## Output
 Irrespective of how pyBLOSSUM is run, the output is the same, consisting of three files saved to the 'results' directory:
-1. A png-format ballistic limit plot with the filename *plot_<identifier>.png*
-2. A csv-format datafile containing the data plotted in the ballistic limit curve with the filename *blc_data_<identifier>.csv*
-3. A csv-format datafile containing the inputs used to generate the ballistic limit curve with the filename *config_data_<identifier>.csv*.
+1. A png-format ballistic limit plot with the filename *plot_<date_time>.png*
+2. A csv-format datafile containing the data plotted in the ballistic limit curve with the filename *blc_data_<date_time>.csv*
+3. A csv-format datafile containing the inputs used to generate the ballistic limit curve with the filename *config_data_<date_time>.csv*.
 
-The <identifier> is a date-time string is used to identify related plots, plot data, and configuration data files.
+The <date_time> is a date-time string is used to identify related plots, plot data, and configuration data files.
 
 
 ## License
