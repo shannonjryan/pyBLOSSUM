@@ -8,69 +8,71 @@ To download this Git project open a terminal/command prompt and enter:
 ```
 git clone https://github.com/shannonjryan/pyBLOSSUM.git
 ```
-If you already have a previous version of the project you can simply update by doing:
+If you already have a previous version of the project you can simply update by navigating to the location of the repository and running:
 ```
 git pull
 ```
-
 ## Setup
 Requirements:
 - Anaconda (https://www.anaconda.com/download)
-- Python 3.8
+- Python 3.12
 	
-The pre-requisite python packages are included in the 'environment.yml' file. To create an Anaconda environment based on the yml file browse to the directory in which you cloned this repository and enter the following command:
+The pre-requisite python packages are included in the 'environment.yml' file. To create an Anaconda environment based on the yml file open a terminal session and browse to the directory in which you cloned this repository. Run the following command:
 ```
 conda env create --file environment.yml
 ```
 
-To activate the enviroment type:
+## Comparing experimental data and BLE predictions
+Experimental datasets are provided in the 'data' directory for the following shielding configurations:
+* Whipple shields
+* Stuffed Whipple shields
+* Honeycomb core sandwich panels
+* Foam core sandwich panels
+
+Test results from those datasets can be plotted together with the ballistic limit curves. For example, if you define a Whipple shield configuration that is nominally identical (or very similar) to one in the experimental dataset, then the corresponding experiments can be included in your generated ballistic limit curve. 
+
+## Running pyBLOSSUM
+pyBLOSSUM can be run either as a GUI or from the command line/terminal. Depending on how you intend to run the code, the process will vary.
+
+### Running via the GUI
+Activate the python enviroment by running:
 ```
 conda activate pyBLOSSUM
 ```
 
-## Instructions for use
-This code can be used in two ways: (1) to generate ballistic limit curves for a defined Whipple shield configuration, and (2) to compare experimental data to a ballistic limit curve for a defined Whipple shield configuration.
+To launch the GUI navigate to the pyBLOSSUM installation directory and run:
+```
+python pyBLOSSUM.py
+```
+This will launch the GUI, as seen below.
+![pyBLOSSUM GUI](doc/pyBLOSSUM_GUI.png "pyBLOSSUM GUI")
 
-### Generating ballistic curves
-To generate performance curves run the following command from the 'code' directory:
+### Running via command line
+Activate the python enviroment by running:
 ```
-python pyBLOSSUM_performance.py filename BLE1 BLE2 BLE3
+conda activate pyBLOSSUM
 ```
-where filename should be replaced by the name of a csv file that defines the Whipple shield configuration and BLE1, BLE2, BLE3, etc. define the ballistic limit equations that should be included in the calculation. The list of available Whipple shield BLEs include:
-* NNO: the 'new non-optimum' equation from Christiansen (1993) [1]
-* modNNO: the modified NNO equation from Christiansen and Kerr (2001) [2]
-* reimerdes: the modified NNO equation from Reimerdes et al. (2006) [3]
-* JSCwhipple: the modified NNO equation from Ryan et al. (2011) [4]
-* JSCwhipple_mod: an unpublished update to the JSC Whipple BLE
+A specific BLE can be called directly from the command line using the following command:
+```
+python BLEs/<BLE_filename> <input_filename> 
+```
+where <BLE_filename> should be replaced by the name of the BLE python file you want to call and <input_filename> should be replaced by the name of a csv file that defines your target configuration. For example,
+```
+python BLEs/BLE_foamSP.py input_files/eval_example-foamSP.csv
+```
+will perform an evaluation on the foam sandwich panel defined in the 'eval_example-foamSP.csv' input file using the foam sandwich panel BLE. Example input files for each target configuration are provided in the 'input_files' directory. The fields (i.e., column headers) in these input files are needed for the BLE analysis, so should not be changed.
 
-An example input file, 'BLC_example.csv', is provided in the 'data' directory.
-
-Example commands are:
+To include experimental data in the generated plots, include the flag --data, e.g.,
 ```
-python pyBLOSSUM_performance.py BLC_example.csv NNO
-```
-To perform the analysis using the NNO BLE. 
-
-```
-python pyBLOSSUM_performance.py BLC_example.csv reimerdes JSCwhipple
-```
-To perform the analysis using the Reimerdes and JSC Whipple BLEs. 
-
-'all' can also be specified for the BLE input to generate ballistic limit curves from all BLEs, i.e.:
-```
-python pyBLOSSUM_performance.py BLC_example.csv all
+python BLEs/BLE_foamSP.py input_files/eval_example-foamSP.csv
 ```
 
-The output is a ballistic limit plot, saved to the 'plots' directory with 'plot' appended to the input filename, e.g., 'plot-BLC_example.png' for analysis of input file 'BLC_example.csv'. Additionally, the plot data is saved to the 'results' directory with 'result' appended to the input filename, e.g., 'result-BLC_example.csv' for analysis of the input file 'BLC_example.csv'.
+## Output
+Irrespective of how pyBLOSSUM is run, the output is the same, consisting of three files saved to the 'results' directory:
+1. A png-format ballistic limit plot with the filename 'plot_<datetime>.png'
+2. A csv-format datafile containing the data plotted in the ballistic limit curve with the filename 'blc_data_<datetime>.csv'
+3. A csv-format datafile containing the inputs used to generate the ballistic limit curve with the filename 'config_data_<datetime>.csv'.
 
-### Comparing experimental data and BLE predictions
-Each of the BLEs can also be plotted together with experimental data provided in a csv file format (only one BLE per analysis). To perform this analysis run the following command from the 'code' directory:
-```
-python BLE_NNO.py filename
-```
-where filename is a csv input file that lists experimental data for a specific Whipple shield configuration. An example input file, 'eval_example.csv' is provided in the 'data' directory. 
+The <datetime> string is used to identify related plots, plot data, and configuration data files.
 
-The following files are output:
-1. A ballistic limit plot, saved to the 'plots' directory with 'plot' and the BLE used in the assessment appended to the input filename, e.g., 'plot-NNO-eval_example.png' for analysis of input file 'eval_example.csv' with the NNO BLE.
-2. The plot data is saved to the 'results' directory with 'plotdata' appended to the input filename, e.g., 'plotdata-NNO-eval_example.csv' for analysis of the input file 'eval_example.csv' with the NNO BLE.
-3. The critical projectile diameter, dc, calculated for each of the experimental data points. 'dc' is appended to the input data file and saved in the results directory with 'eval' appended to the input filename, e.g., 'eval-NNO-eval_example.csv' for analysis of the input file 'eval_example.csv' with the NNO BLE.
+

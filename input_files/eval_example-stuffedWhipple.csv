@@ -1,0 +1,3 @@
+﻿proj_mat,proj_density,angle,bumper_mat,bumper_thick,bumper_density,kevlar_AD,nextel_AD,standoff,wall_mat,wall_thick,wall_density,wall_yield,AD_MLI
+(-),(g/ccm),(deg),,(cm),(g/cm3),(g/cm2),(g/cm2),(cm),(-),(cm),(g/cm3),(MPa),(g/cm2)
+AA2017-T4,2.8,0,AA6061-T6,0.25,2.7,0.0615,0.06,14.35,AA2219-T851,0.32,2.84,393,0

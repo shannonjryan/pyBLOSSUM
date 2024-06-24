@@ -1,0 +1,3 @@
+﻿type,proj_mat,proj_density,angle,outerBumper_mat,outerBumper_thick,outerBumper_density,standoff1,innerBumper_mat,innerBumper_thick,innerBumper_density,standoff2,wall_mat,wall_thick,wall_density,wall_yield,AD_MLI
+(-),(-),(g/ccm),(deg),(-),(cm),(g/cm3),(cm),(-),(cm),(g/cm3),(cm),(-),(cm),(g/cm3),(MPa),(g/cm2)
+triple,AA99.9%,2.7,0,AA1100-H14,0.041,2.7,3.5,AA1100-H14,0.041,2.7,30,AA1100-H14,0.15,2.7,250,0.0447

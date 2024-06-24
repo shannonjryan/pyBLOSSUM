@@ -1,6 +1,0 @@
-﻿source,ref,proj_diam,proj_mat,proj_density,proj_mass,angle,velocity,bumper_mat,bumper_thick,bumper_density,standoff,wall_mat,wall_thick,wall_density,wall_yield,code,result,perforated_class,spalled_class
--,-,cm,-,g/cm3,g,deg,km/s,-,cm,g/cm3,cm,-,cm,g/cm3,ksi,-,-,-,-
-TP-2003-210788,A1672,0.318,Al 2017-T4,2.796,0.04693,0,6.05,Al 6061-T6,0.064,2.713,10.16,Al 2024-T3,0.16,2.796,47,E4,P,1,0
-TP-2003-210788,A1674,0.318,Al 2017-T4,2.796,0.04693,0,6.3,Al 6061-T6,0.064,2.713,10.16,Al 2024-T3,0.16,2.796,47,E2,SP,0,1
-TP-2003-210788,A1676,0.318,Al 2017-T4,2.796,0.04693,0,6.07,Al 6061-T6,0.064,2.713,10.16,Al 2024-T3,0.16,2.796,47,E4,P,1,0
-TP-2003-210788,A1682,0.318,Al 2017-T4,2.796,0.04693,0,6.28,Al 6061-T6,0.064,2.713,10.16,Al 2024-T3,0.16,2.796,47,E4,P,1,0

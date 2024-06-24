@@ -1,0 +1,3 @@
+﻿proj_mat,proj_density,angle,type,target_mat,shield_thick,shield_density,shield_HB,shield_C,MLI_AD,mode
+-,g/cm3,deg,-,-,cm,g/cm3,HB,km/s,g/cm2,-
+AA99.9%,2.7,0,CFRP,AA99.9%,0.38,1.8,0,0,0.058,perforate
