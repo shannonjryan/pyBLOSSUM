@@ -1,4 +1,4 @@
-# pyBLOSSUM - a Python library for assessing the Ballistic Limit Of Spacecraft Structures Under Micrometeoroid and orbital debris impact
+# pyBLOSSUM - a tool for assessing the Ballistic Limit Of Spacecraft Structures Under Micrometeoroid and orbital debris impact
 
 This library provides ballistic limit equations (BLEs) for calculating the performance of spacecraft structures under impact by micrometeoroid and orbital debris (MMOD) particles at hypervelocity.
 
