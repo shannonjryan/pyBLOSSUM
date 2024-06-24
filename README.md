@@ -45,6 +45,7 @@ To launch the GUI navigate to the pyBLOSSUM installation directory and run:
 python pyBLOSSUM.py
 ```
 This will launch the GUI, as seen below.
+
 ![pyBLOSSUM GUI](doc/pyBLOSSUM_GUI.png "pyBLOSSUM GUI")
 
 ### Running via command line
@@ -52,7 +53,7 @@ Activate the python enviroment by running:
 ```
 conda activate pyBLOSSUM
 ```
-A specific BLE can be called directly from the command line using the following command:
+A specific BLE can be called directly from the command line. Navigate to the pyBLOSSUM installation directory and run:
 ```
 python BLEs/<BLE_filename> <input_filename> 
 ```
@@ -64,15 +65,15 @@ will perform an evaluation on the foam sandwich panel defined in the 'eval_examp
 
 To include experimental data in the generated plots, include the flag --data, e.g.,
 ```
-python BLEs/BLE_foamSP.py input_files/eval_example-foamSP.csv
+python BLEs/BLE_foamSP.py input_files/eval_example-foamSP.csv --data
 ```
 
 ## Output
 Irrespective of how pyBLOSSUM is run, the output is the same, consisting of three files saved to the 'results' directory:
-1. A png-format ballistic limit plot with the filename 'plot_<datetime>.png'
-2. A csv-format datafile containing the data plotted in the ballistic limit curve with the filename 'blc_data_<datetime>.csv'
-3. A csv-format datafile containing the inputs used to generate the ballistic limit curve with the filename 'config_data_<datetime>.csv'.
+1. A png-format ballistic limit plot with the filename 'plot_"<datetime>".png'
+2. A csv-format datafile containing the data plotted in the ballistic limit curve with the filename 'blc_data_"<datetime>".csv'
+3. A csv-format datafile containing the inputs used to generate the ballistic limit curve with the filename 'config_data_"<datetime>".csv'.
 
-The <datetime> string is used to identify related plots, plot data, and configuration data files.
+The "<datetime>" string is used to identify related plots, plot data, and configuration data files.
 
 
