@@ -92,9 +92,6 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         df_data = pd.read_csv(filename,skiprows=[1])
 
-        ## convert units
-        df_data['wall_yield'] *= 0.145038  # units = ksi
-
         ## generate ballistic limit curves
         velocities = np.linspace(0.1,15,150)
         df_plot = pd.DataFrame(np.repeat(df_data.values, len(velocities), axis=0), columns=df_data.columns)  # takes the first row of the imported dataframe and duplicates it to match the size of the 'velocities' vector
@@ -132,7 +129,7 @@ if __name__ == "__main__":
         print(f"Ballistic limit plot saved to file: plot_{now_str}.png")
         print(f"Ballistic limit curve data saved to file: blc_data_{now_str}.csv")
         print(f"Configuration data saved to file: config_data_{now_str}.csv")             
-    
+
     except Exception as e:
         print(f"An error occurred: {e}")
 

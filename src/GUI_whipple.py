@@ -456,7 +456,7 @@ class MyApp(QWidget):
                 ax.scatter(df_P['velocity'],df_P['proj_diam'],edgecolors='black',facecolors='white',label='P')
 
             ax.set_xlabel('Velocity (km/s)')
-            ax.set_ylabel('Projectile diameter (mm)')
+            ax.set_ylabel('Projectile diameter (cm)')
             ax.set_ylim(0.0,2*pltmax)  
             ax.legend()
 

@@ -331,7 +331,7 @@ class MyApp(QWidget):
             df_results.insert(len(df_results.columns), 'dc_BLE', df_plot['dc_BLE'])
 
             ax.set_xlabel('Velocity (km/s)')
-            ax.set_ylabel('Projectile diameter (mm)')
+            ax.set_ylabel('Projectile diameter (cm)')
             ax.set_ylim(0.0,2*pltmax)  
             ax.legend()
 
