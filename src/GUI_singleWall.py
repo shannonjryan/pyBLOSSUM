@@ -1,47 +1,84 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QComboBox, QLineEdit, QGroupBox, QPushButton, QMessageBox, QCheckBox, QFrame, QListWidget, QAbstractItemView
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 import sys
 import os
+from math import sqrt
 import pandas as pd
-import numpy as np
-from datetime import datetime
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-from matplotlib.figure import Figure
-import seaborn as sns
-import itertools
 
+## Add the BLE directory to the path
 current_file_path = os.path.abspath(__file__)
 current_directory = os.path.dirname(current_file_path)
 sys.path.insert(0, os.path.join(os.path.dirname(current_directory),'BLEs'))
-from BLE_singleWall import singleWall_performance
 
-# Set some defaults
-sns.set_theme()
+## Set some defaults
 root_dir = os.path.dirname(current_directory)
 
-# Define the plot characteristics
-colors = sns.color_palette()
-line_styles = ['-', '--', '-.', ':',(0,(3,1,1,1,1)),(0,(3,5,1,5,1,5))]
-color_line_style_pairs = list(zip(colors, line_styles))
+## ------------------------------------------------- ##
+# Worker thread for data loading
+## ------------------------------------------------- ##
+class DataLoader(QThread):
+    data_loaded = pyqtSignal(pd.DataFrame)
 
-# Load the materials data
-filename = 'material_data.xlsx'
-df_materials = pd.read_excel(os.path.join(root_dir,'data',filename))
+    ## load the material data on the background thread
+    def run(self):
+        filename = 'material_data.csv'
+        df_materials = pd.read_csv(os.path.join(root_dir, 'data', filename))
+        new_column_names = {
+            'Material': 'mat',
+            'Density (g/ccm)': 'density',
+            'Hardness (HB)': 'hardness',
+            'Yield strength (Mpa)': 'yield',
+            'Elongation (%)': 'elongation',
+            'Tensile modulus (Gpa)': 'tensile_modulus',
+            'Shear modulus (Gpa)': 'shear_modulus',
+            'Shear strength (Mpa)': 'shear_strength',
+            'Specific heat (J/kg.K)': 'specific_heat',
+            'Melting temperature (K)': 'melting_temp'
+        }
+        df_materials.rename(columns=new_column_names, inplace=True)
+        self.data_loaded.emit(df_materials)
 
-# Define the new column names
-new_column_names = {
-    'Material': 'mat',
-    'Density (g/ccm)': 'density',
-    'Hardness (HB)': 'hardness',
-    'Yield strength (Mpa)': 'yield',
-    'Elongation (%)': 'elongation',
-    'Tensile modulus (Gpa)': 'tensile_modulus',
-    'Shear modulus (Gpa)': 'shear_modulus',
-    'Shear strength (Mpa)': 'shear_strength',
-    'Specific heat (J/kg.K)': 'specific_heat',
-    'Melting temperature (K)': 'melting_temp'
-}
-df_materials.rename(columns=new_column_names,inplace=True)
+## ------------------------------------------------- ##
+# Worker thread for package loading
+## ------------------------------------------------- ##
+class PackageLoader(QThread):
+    packages_loaded = pyqtSignal(object)
+
+    def run(self):
+
+        ## Load additional packages
+        import numpy as np
+        from datetime import datetime
+        import matplotlib.pyplot as plt
+        from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+        from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+        from matplotlib.figure import Figure
+        import seaborn as sns
+        import itertools
+
+        ## Define the plot characteristics
+        sns.set_theme()
+        colors = sns.color_palette()
+        line_styles = ['-', '--', '-.', ':',(0,(3,1,1,1,1)),(0,(3,5,1,5,1,5))]
+        color_line_style_pairs = list(zip(colors, line_styles))
+
+        ## Load the ballistic limit scripts
+        from BLE_singleWall import singleWall_performance
+
+        ## Emit the loaded packages
+        self.packages_loaded.emit({
+            'np': np,
+            'datetime': datetime,
+            'plt': plt,
+            'FigureCanvas': FigureCanvas,
+            'NavigationToolbar': NavigationToolbar,
+            'Figure': Figure,
+            'sns': sns,
+            'itertools': itertools,
+            'pd': pd,
+            'color_line_style_pairs': color_line_style_pairs,
+            'singleWall_performance': singleWall_performance
+        })
 
 ## ------------------------------------------------- ##
 # Define the plot window
@@ -49,6 +86,10 @@ df_materials.rename(columns=new_column_names,inplace=True)
 class PlotWindow(QDialog):
     def __init__(self, parent=None):
         super(PlotWindow, self).__init__(parent)
+
+        from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+        from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+        from matplotlib.figure import Figure
 
         # Create a Figure and a FigureCanvas
         self.figure = Figure()
@@ -73,7 +114,25 @@ class PlotWindow(QDialog):
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
+        self.initUI()
 
+        ## Start the DataLoader thread
+        self.data_loader = DataLoader()
+        self.data_loader.data_loaded.connect(self.on_data_loaded)
+        self.data_loader.start()
+
+        ## Start the PackageLoader thread
+        self.package_loader = PackageLoader()
+        self.package_loader.packages_loaded.connect(self.on_packages_loaded)
+        self.package_loader.start()
+
+    def on_data_loaded(self, df_materials):
+        self.df_materials = df_materials
+
+    def on_packages_loaded(self, packages):
+        self.packages = packages
+
+    def initUI(self):
         self.layout = QVBoxLayout(self)
         widget_width = 120
         self.setWindowTitle("Single Wall")
@@ -128,11 +187,12 @@ class MyApp(QWidget):
         self.material0_dropdown.currentIndexChanged.connect(self.on_material0_selected)
         self.frame1_layout.addWidget(self.material0_dropdown, 0, 1)
 
-        self.density0_label = QLabel("Density (kg/m³):", self)
+        self.density0_label = QLabel("Density (g/cm³):", self)
         self.frame1_layout.addWidget(self.density0_label, 1, 0)
         self.density0_entry = QLineEdit(self)
         self.density0_entry.setFixedWidth(widget_width)
-        self.density0_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_proj_mat, 'density'].values[0]))
+        # self.density0_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_proj_mat, 'density'].values[0]))
+        self.density0_entry.setText("2.8")
         self.frame1_layout.addWidget(self.density0_entry, 1, 1)
 
         ## ------------------------------------------------- ##
@@ -176,21 +236,25 @@ class MyApp(QWidget):
         self.density1_entry = QLineEdit(self)
         self.density1_entry.setFixedWidth(widget_width)        
         self.frame2_layout.addWidget(self.density1_entry, 3, 1)
-        self.density1_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'density'].values[0]))
+        # self.density1_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'density'].values[0]))
+        self.density1_entry.setText("2.7")
         
         self.hardness_label = QLabel("Hardness (HB):", self)
         self.frame2_layout.addWidget(self.hardness_label, 4, 0)
         self.hardness_entry = QLineEdit(self)
         self.hardness_entry.setFixedWidth(widget_width)    
         self.frame2_layout.addWidget(self.hardness_entry, 4, 1)   
-        self.hardness_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'hardness'].values[0]))
+        # self.hardness_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'hardness'].values[0]))
+        self.hardness_entry.setText("95")
 
         self.soundspeed_label = QLabel("Soundspeed (km/s):", self)
         self.frame2_layout.addWidget(self.soundspeed_label, 5, 0)
         self.soundspeed_entry = QLineEdit(self)
         self.soundspeed_entry.setFixedWidth(widget_width)             
         self.frame2_layout.addWidget(self.soundspeed_entry, 5, 1)
-        soundspeed = np.sqrt(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'tensile_modulus'].values[0]/df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'density'].values[0])
+        # soundspeed = np.sqrt(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'tensile_modulus'].values[0]/df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'density'].values[0])
+        # soundspeed = self.packages['np'].sqrt(68.9E9/2700)
+        soundspeed = sqrt(68.9E9/2700)/1000  # units = km/s
         self.soundspeed_entry.setText(f'{soundspeed:.2f}')           
 
         self.MLI_label = QLabel("MLI AD (g/cm²):", self)
@@ -208,17 +272,12 @@ class MyApp(QWidget):
 
         self.frame3_layout = QGridLayout(self.frame3)
 
-        # Create a dropdown to select the specific target failure threshold
         self.failure_type_label = QLabel("Failure type:", self)
         self.frame3_layout.addWidget(self.failure_type_label, 0, 0)
         self.failure_type_dropdown = QComboBox(self)
         self.failure_type_dropdown.setFixedWidth(widget_width)
         self.failure_type_dropdown.addItems(["Perforation", "Detached spall", "Incipient spall"])
-
-        # Add the dropdown to the frame's layout
         self.frame3_layout.addWidget(self.failure_type_dropdown, 0, 1)
-
-        # Add the new frame to the main layout
         self.layout.addWidget(self.frame3)
 
         ## ------------------------------------------------- ##
@@ -237,24 +296,24 @@ class MyApp(QWidget):
     ## ------------------------------------------------- ##
     def on_material0_selected(self, index):
         selected_material = self.material0_dropdown.itemText(index)
-        density = df_materials.loc[df_materials['mat'] == selected_material, 'density'].values[0]
+        density = self.df_materials.loc[self.df_materials['mat'] == selected_material, 'density'].values[0]
         self.density0_entry.setText(str(density))
 
     ## ------------------------------------------------- ##
     def on_material1_selected(self, index):
         selected_material = self.material0_dropdown.itemText(index)
-        self.density1_entry.setText(str(df_materials.loc[df_materials['mat'] == selected_material, 'density'].values[0]))
-        self.hardness_entry.setText(str(df_materials.loc[df_materials['mat'] == selected_material, 'hardness'].values[0]))
-        soundspeed = np.sqrt(df_materials.loc[df_materials['mat'] == selected_material, 'tensile_modulus'].values[0]/df_materials.loc[df_materials['mat'] == selected_material, 'density'].values[0])
+        self.density1_entry.setText(str(self.df_materials.loc[self.df_materials['mat'] == selected_material, 'density'].values[0]))
+        self.hardness_entry.setText(str(self.df_materials.loc[self.df_materials['mat'] == selected_material, 'hardness'].values[0]))
+        soundspeed = self.packages['np'].sqrt(self.df_materials.loc[self.df_materials['mat'] == selected_material, 'tensile_modulus'].values[0]/self.df_materials.loc[self.df_materials['mat'] == selected_material, 'density'].values[0])
         self.soundspeed_entry.setText(f'{soundspeed:.2f}')           
 
     ## ------------------------------------------------- ##
     def on_target_type_selected(self, index):
         selected_material = self.target_type_dropdown.itemText(index)
         if selected_material == "Aluminium":
-            self.density1_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'density'].values[0]))
-            self.hardness_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'hardness'].values[0]))
-            soundspeed = np.sqrt(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'tensile_modulus'].values[0]/df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'density'].values[0])
+            self.density1_entry.setText(str(self.df_materials.loc[self.df_materials['mat'] == self.initial_target_mat, 'density'].values[0]))
+            self.hardness_entry.setText(str(self.df_materials.loc[self.df_materials['mat'] == self.initial_target_mat, 'hardness'].values[0]))
+            soundspeed = self.packages['np'].sqrt(self.df_materials.loc[self.df_materials['mat'] == self.initial_target_mat, 'tensile_modulus'].values[0]/self.df_materials.loc[self.df_materials['mat'] == self.initial_target_mat, 'density'].values[0])
             self.soundspeed_entry.setText(f'{soundspeed:.2f}')           
             self.hardness_entry.setDisabled(False)
             self.soundspeed_entry.setDisabled(False)
@@ -280,7 +339,7 @@ class MyApp(QWidget):
     ## ------------------------------------------------- ##
     def on_run_button_clicked(self):
 
-        color_line_style_cycler = itertools.cycle(color_line_style_pairs)
+        color_line_style_cycler = self.packages['itertools'].cycle(self.packages['color_line_style_pairs'])
 
         try:
             # For steel, CFRP, and fibreglass targets fill the missing fields with '0'
@@ -297,15 +356,15 @@ class MyApp(QWidget):
 
             data = {
                 'proj_mat': self.material0_dropdown.currentText(),
-                'proj_density': float(self.density0_entry.text()),
-                'angle': float(self.angle_entry.text()),
+                'proj_density': float(self.density0_entry.text()),  # units = g/cm3
+                'angle': float(self.angle_entry.text()),  # units = degrees
                 'type': self.target_type_dropdown.currentText(), 
                 'target_mat': self.material1_dropdown.currentText(), 
-                'shield_thick': float(self.thickness_entry.text()),
-                'shield_density': float(self.density1_entry.text()),                
-                'shield_HB': float(self.hardness_entry.text()),
-                'shield_C': float(self.soundspeed_entry.text()),
-                'MLI_AD': float(self.MLI_entry.text()) if self.MLI_entry.text != "" else 0
+                'shield_thick': float(self.thickness_entry.text()),  # units = cm
+                'shield_density': float(self.density1_entry.text()),  # units = g/cm3           
+                'shield_HB': float(self.hardness_entry.text()),  # units = HB
+                'shield_C': float(self.soundspeed_entry.text()),  # units = m/s
+                'MLI_AD': float(self.MLI_entry.text()) if self.MLI_entry.text != "" else 0  # units = g/cm2
             }
 
             ## add material type code
@@ -330,25 +389,25 @@ class MyApp(QWidget):
 
             df = pd.DataFrame([data])    
 
-            # Get the current date and time (for saving output)
-            now = datetime.now()
+            ## Get the current date and time (for saving output)
+            now = self.packages['datetime'].now()
             now_str = now.strftime("%Y%m%d_%H%M%S")
 
-            # Create a plot window
+            ## Create a plot window
             self.plot_window = PlotWindow()
 
-            # Create a plot
+            ## Create a plot
             ax = self.plot_window.figure.add_subplot(111)
 
-            # Call the ballistic limit equation
-            velocities = np.linspace(0.1, 15, 150)
-            df_plot = pd.DataFrame(np.repeat(df.values, len(velocities), axis=0), columns=df.columns)
+            ## Call the ballistic limit equation
+            velocities = self.packages['np'].linspace(0.1, 15, 150)  # units = km/s
+            df_plot = pd.DataFrame(self.packages['np'].repeat(df.values, len(velocities), axis=0), columns=df.columns)
             df_plot['velocity'] = velocities
             pltmax = 0
             df_config = df_plot.iloc[[0]].drop(columns=['velocity']) 
             df_results = df_plot[['velocity']].copy()
             color, line_style = next(color_line_style_cycler)
-            df_plot['dc_BLE'] = df_plot.apply(singleWall_performance,axis=1)
+            df_plot['dc_BLE'] = df_plot.apply(self.packages['singleWall_performance'],axis=1)
             ax.plot(df_plot['velocity'],df_plot['dc_BLE'],color=color,linestyle=line_style,label='BLE')
             pltmax = max(pltmax, df_plot['dc_BLE'][len(velocities)/2])
             df_results.insert(len(df_results.columns), 'dc_BLE', df_plot['dc_BLE'])
@@ -358,30 +417,30 @@ class MyApp(QWidget):
             ax.set_ylim(0.0,2*pltmax)  
             ax.legend()
 
-            # Draw the plot
+            ## Draw the plot
             self.plot_window.canvas.draw()
 
-            # Show the plot window
+            ## Show the plot window
             self.plot_window.show()
 
-            # If the save_plot_checkbox is checked, save the plot
+            ## If the save_plot_checkbox is checked, save the plot
             if self.save_plot_checkbox.isChecked():
-                # Check if the "results" directory exists, and create it if it doesn't
+                ## Check if the "results" directory exists, and create it if it doesn't
                 results_dir = os.path.join(root_dir, "results")
                 if not os.path.exists(results_dir):
                     os.makedirs(results_dir)
                 
-                # Save the plot to png file
+                ## Save the plot to png file
                 self.plot_window.figure.savefig(os.path.join(root_dir,"results",f"plot_{now_str}.png"))
 
-            # If the save_data_checkbox is checked, save the velocity and critical diameter data, as well as config data
+            ## If the save_data_checkbox is checked, save the velocity and critical diameter data, as well as config data
             if self.save_data_checkbox.isChecked():
-                # Check if the "results" directory exists, and create it if it doesn't
+                ## Check if the "results" directory exists, and create it if it doesn't
                 results_dir = os.path.join(root_dir, "results")
                 if not os.path.exists(results_dir):
                     os.makedirs(results_dir)
                 
-                # Write the output data to a CSV file
+                ## Write the output data to a CSV file
                 df_results.to_csv(os.path.join(root_dir,"results",f"blc_data_{now_str}.csv"), index=False)     
                 df_config.to_csv(os.path.join(root_dir,"results",f"config_data_{now_str}.csv"), index=False)                 
 
