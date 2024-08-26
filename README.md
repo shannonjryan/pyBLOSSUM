@@ -58,7 +58,7 @@ python BLEs\<BLE_filename> <input_filename>
 ```
 where <BLE_filename> should be replaced by the name of the BLE python file you want to call and <input_filename> should be replaced by the name of a csv file that defines your target configuration. 
 
-<em>NOTE: for mac and unix-based systems replace '\' with '/' in all path definitions.</em>
+<em>NOTE: for mac and unix-based systems replace "\\" with "/" in all path definitions.</em>
 
 An example command for running a BLE evaluation directly from the command line is given,
 ```
