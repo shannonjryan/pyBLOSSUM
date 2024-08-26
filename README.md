@@ -60,7 +60,7 @@ where <BLE_filename> should be replaced by the name of the BLE python file you w
 
 <em>NOTE: for mac and unix-based systems replace "\\" with "/" in all path definitions.</em>
 
-An example command for running a BLE evaluation directly from the command line is given,
+For example,
 ```
 python BLEs\BLE_foamSP.py input_files\eval_example-foamSP.csv
 ```
