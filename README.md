@@ -54,17 +54,21 @@ conda activate pyBLOSSUM
 ```
 A specific BLE can be called directly from the command line. Navigate to the pyBLOSSUM installation directory and run:
 ```
-python BLEs/<BLE_filename> <input_filename> 
+python BLEs\<BLE_filename> <input_filename> 
 ```
-where <BLE_filename> should be replaced by the name of the BLE python file you want to call and <input_filename> should be replaced by the name of a csv file that defines your target configuration. For example,
+where <BLE_filename> should be replaced by the name of the BLE python file you want to call and <input_filename> should be replaced by the name of a csv file that defines your target configuration. 
+
+<em>NOTE: for mac and unix-based systems replace '\' with '/' in all path definitions.</em>
+
+An example command for running a BLE evaluation directly from the command line is given,
 ```
-python BLEs/BLE_foamSP.py input_files/eval_example-foamSP.csv
+python BLEs\BLE_foamSP.py input_files\eval_example-foamSP.csv
 ```
 will perform an evaluation on the foam sandwich panel defined in the 'eval_example-foamSP.csv' input file using the foam sandwich panel BLE. Example input files for each target configuration are provided in the 'input_files' directory. The fields (i.e., column headers) in these input files are needed for the BLE analysis, so should not be changed.
 
 To include experimental data in the generated plots, include the flag --data, e.g.,
 ```
-python BLEs/BLE_foamSP.py input_files/eval_example-foamSP.csv --data
+python BLEs\BLE_foamSP.py input_files\eval_example-foamSP.csv --data
 ```
 
 ## Output
