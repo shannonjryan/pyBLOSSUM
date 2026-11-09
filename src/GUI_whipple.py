@@ -1,95 +1,17 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QComboBox, QLineEdit, QGroupBox, QPushButton, QMessageBox, QCheckBox, QFrame, QListWidget, QAbstractItemView
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QComboBox, QLineEdit, QGroupBox, QPushButton, QMessageBox, QCheckBox, QFrame, QListWidget, QAbstractItemView
+from PyQt5.QtCore import Qt
+from functools import cached_property
 import sys
 import os
-import pandas as pd
+# Make the same package imports available when this file is run directly.
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if not __package__:
+    sys.path.insert(0, root_dir)
 
-## Add the BLE directory to the path
-current_file_path = os.path.abspath(__file__)
-current_directory = os.path.dirname(current_file_path)
-sys.path.insert(0, os.path.join(os.path.dirname(current_directory),'BLEs'))
+from BLEs.results_utils import create_run_directory, write_config_csv
+from src.gui_support import material_properties, run_standalone, warm_analysis_libraries
 
-## Set some defaults
-root_dir = os.path.dirname(current_directory)
 
-## ------------------------------------------------- ##
-# Worker thread for data loading
-## ------------------------------------------------- ##
-class DataLoader(QThread):
-    data_loaded = pyqtSignal(pd.DataFrame)
-
-    ## load the material data on the background thread
-    def run(self):
-        filename = 'material_data.csv'
-        df_materials = pd.read_csv(os.path.join(root_dir, 'data', filename))
-        new_column_names = {
-            'Material': 'mat',
-            'Density (g/ccm)': 'density',
-            'Hardness (HB)': 'hardness',
-            'Yield strength (Mpa)': 'yield',
-            'Elongation (%)': 'elongation',
-            'Tensile modulus (Gpa)': 'tensile_modulus',
-            'Shear modulus (Gpa)': 'shear_modulus',
-            'Shear strength (Mpa)': 'shear_strength',
-            'Specific heat (J/kg.K)': 'specific_heat',
-            'Melting temperature (K)': 'melting_temp'
-        }
-        df_materials.rename(columns=new_column_names, inplace=True)
-        self.data_loaded.emit(df_materials)
-
-## ------------------------------------------------- ##
-# Worker thread for package loading
-## ------------------------------------------------- ##
-class PackageLoader(QThread):
-    packages_loaded = pyqtSignal(object)
-
-    def run(self):
-
-        ## Load additional packages
-        import numpy as np
-        from datetime import datetime
-        import matplotlib.pyplot as plt
-        from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-        from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-        from matplotlib.figure import Figure
-        import seaborn as sns
-        import itertools
-
-        ## Define the plot characteristics
-        sns.set_theme()
-        colors = sns.color_palette()
-        line_styles = ['-', '--', '-.', ':',(0,(3,1,1,1,1)),(0,(3,5,1,5,1,5))]
-        color_line_style_pairs = list(zip(colors, line_styles))
-
-        ## Load the ballistic limit scripts
-        from BLE_JSCwhipple_mod import modJSCwhipple_performance
-        from BLE_JSCwhipple import JSCwhipple_performance
-        from BLE_reimerdeswhipple import reimerdes_performance
-        from BLE_NNOwhipple import NNO_performance
-        from BLE_modNNOwhipple import modNNO_performance
-
-        ## Emit the loaded packages
-        self.packages_loaded.emit({
-            'np': np,
-            'datetime': datetime,
-            'plt': plt,
-            'FigureCanvas': FigureCanvas,
-            'NavigationToolbar': NavigationToolbar,
-            'Figure': Figure,
-            'sns': sns,
-            'itertools': itertools,
-            'pd': pd,
-            'color_line_style_pairs': color_line_style_pairs,
-            'modJSCwhipple_performance': modJSCwhipple_performance,
-            'JSCwhipple_performance': JSCwhipple_performance,
-            'reimerdes_performance': reimerdes_performance,
-            'NNO_performance': NNO_performance,
-            'modNNO_performance': modNNO_performance
-        })
-
-## ------------------------------------------------- ##
-# Define the plot window
-## ------------------------------------------------- ##
 class PlotWindow(QDialog):
     def __init__(self, parent=None):
         super(PlotWindow, self).__init__(parent)
@@ -121,23 +43,26 @@ class PlotWindow(QDialog):
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
+        self.materials = material_properties(root_dir)
         self.initUI()
 
-        ## Start the DataLoader thread
-        self.data_loader = DataLoader()
-        self.data_loader.data_loaded.connect(self.on_data_loaded)
-        self.data_loader.start()
+    @cached_property
+    def packages(self):
+        packages = warm_analysis_libraries().result()
+        from BLEs.BLE_JSCwhipple_mod import modJSCwhipple_curve
+        from BLEs.BLE_JSCwhipple import JSCwhipple_curve
+        from BLEs.BLE_reimerdeswhipple import reimerdes_curve
+        from BLEs.BLE_NNOwhipple import NNO_curve
+        from BLEs.BLE_modNNOwhipple import modNNO_curve
 
-        ## Start the PackageLoader thread
-        self.package_loader = PackageLoader()
-        self.package_loader.packages_loaded.connect(self.on_packages_loaded)
-        self.package_loader.start()
-
-    def on_data_loaded(self, df_materials):
-        self.df_materials = df_materials
-
-    def on_packages_loaded(self, packages):
-        self.packages = packages
+        return {
+            **packages,
+            'modJSCwhipple_curve': modJSCwhipple_curve,
+            'JSCwhipple_curve': JSCwhipple_curve,
+            'reimerdes_curve': reimerdes_curve,
+            'NNO_curve': NNO_curve,
+            'modNNO_curve': modNNO_curve,
+        }
 
     def initUI(self):
         self.layout = QVBoxLayout(self)
@@ -198,7 +123,6 @@ class MyApp(QWidget):
         self.frame1_layout.addWidget(self.density0_label, 1, 0)
         self.density0_entry = QLineEdit(self)
         self.density0_entry.setFixedWidth(widget_width)
-        # self.density0_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_proj_mat, 'density'].values[0]))
         self.density0_entry.setText("2.8")
         self.frame1_layout.addWidget(self.density0_entry, 1, 1)
 
@@ -230,7 +154,6 @@ class MyApp(QWidget):
         self.frame2_layout.addWidget(self.density1_label, 2, 0)
         self.density1_entry = QLineEdit(self)
         self.density1_entry.setFixedWidth(widget_width)
-        # self.density1_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_bumper_mat, 'density'].values[0]))
         self.density1_entry.setText("2.7")
         self.frame2_layout.addWidget(self.density1_entry, 2, 1)
 
@@ -268,7 +191,6 @@ class MyApp(QWidget):
         self.frame3_layout.addWidget(self.density2_label, 2, 0)
         self.density2_entry = QLineEdit(self)
         self.density2_entry.setFixedWidth(widget_width)
-        # self.density2_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_wall_mat, 'density'].values[0]))
         self.density2_entry.setText("2.7")
         self.frame3_layout.addWidget(self.density2_entry, 2, 1)
 
@@ -276,7 +198,6 @@ class MyApp(QWidget):
         self.frame3_layout.addWidget(self.yield2_label, 3, 0)
         self.yield2_entry = QLineEdit(self)
         self.yield2_entry.setFixedWidth(widget_width)        
-        # self.yield2_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_wall_mat, 'yield'].values[0]))
         self.yield2_entry.setText("276")
         self.frame3_layout.addWidget(self.yield2_entry, 3, 1)
 
@@ -367,20 +288,20 @@ class MyApp(QWidget):
     ## ------------------------------------------------- ##
     def on_material0_selected(self, index):
         selected_material = self.material0_dropdown.itemText(index)
-        density = self.df_materials.loc[self.df_materials['mat'] == selected_material, 'density'].values[0]
+        density = self.materials[selected_material]['density']
         self.density0_entry.setText(str(density))
 
     ## ------------------------------------------------- ##
     def on_material1_selected(self, index):
         selected_material = self.material1_dropdown.itemText(index)
-        density = self.df_materials.loc[self.df_materials['mat'] == selected_material, 'density'].values[0]
+        density = self.materials[selected_material]['density']
         self.density1_entry.setText(str(density))
 
     ## ------------------------------------------------- ##
     def on_material2_selected(self, index):
         selected_material = self.material2_dropdown.itemText(index)
-        density2 = self.df_materials.loc[self.df_materials['mat'] == selected_material, 'density'].values[0]
-        yield2 = self.df_materials.loc[self.df_materials['mat'] == selected_material, 'yield'].values[0]        
+        density2 = self.materials[selected_material]['density']
+        yield2 = self.materials[selected_material]['yield']
         self.density2_entry.setText(str(density2))
         self.yield2_entry.setText(str(yield2))   
 
@@ -398,18 +319,20 @@ class MyApp(QWidget):
 
     ## ------------------------------------------------- ##
     def on_run_button_clicked(self):
-        
-        color_line_style_cycler = self.packages['itertools'].cycle(self.packages['color_line_style_pairs'])
-
         try:
+            pd = self.packages['pd']
+            color_line_style_cycler = self.packages['itertools'].cycle(self.packages['color_line_style_pairs'])
             ## Check if any of the text boxes are empty
             if not all([self.angle_entry.text(), self.density0_entry.text(),
                         self.thickness1_entry.text(), self.density1_entry.text(), self.standoff_entry.text(),
                         self.thickness2_entry.text(), self.density2_entry.text(), self.yield2_entry.text()]):
                 raise ValueError("All fields must be filled out.")
-            else:
-                print("All fields filled.")
-
+            np = self.packages['np']
+            mli_mode = self.mli_type_dropdown.currentText()
+            mli_ad = self.MLIad_entry.text().strip() if mli_mode in ("External", "Internal") else "0"
+            mli_standoff = self.MLIs_entry.text().strip() if mli_mode == "Internal" else "0"
+            if not mli_ad or not mli_standoff:
+                raise ValueError("Fill out the MLI fields for the selected MLI type.")
             data = {
                 'proj_mat': self.material0_dropdown.currentText(),
                 'proj_density': float(self.density0_entry.text()),  # units = g/cm3
@@ -422,14 +345,51 @@ class MyApp(QWidget):
                 'wall_thick': float(self.thickness2_entry.text()),  # units = cm
                 'wall_density': float(self.density2_entry.text()),  # units = g/cm3
                 'wall_yield': float(self.yield2_entry.text())*0.145038,  # convert MPa to ksi
-                'AD_MLI': float(self.MLIad_entry.text()) if self.MLIad_entry.text() != "" else 0,  # units = g/cm2
-                'S_MLI': float(self.MLIs_entry.text()) if self.MLIs_entry.text() != "" else 0,  # units = cm
+                'AD_MLI': float(mli_ad),  # units = g/cm2
+                'S_MLI': float(mli_standoff),  # units = cm
             }
-            df = pd.DataFrame([data])
-        
-            ## Get the current date and time
-            now = self.packages['datetime'].now()
-            now_str = now.strftime("%Y%m%d_%H%M%S")
+            positive_fields = {
+                'proj_density': 'Projectile density',
+                'bumper_thick': 'Bumper thickness',
+                'bumper_density': 'Bumper density',
+                'standoff': 'Shield standoff',
+                'wall_thick': 'Rear wall thickness',
+                'wall_density': 'Rear wall density',
+                'wall_yield': 'Rear wall yield strength',
+            }
+            if mli_mode in ("External", "Internal"):
+                positive_fields['AD_MLI'] = 'MLI areal density'
+            if mli_mode == "Internal":
+                positive_fields['S_MLI'] = 'MLI standoff'
+            for field, label in positive_fields.items():
+                if not np.isfinite(data[field]) or data[field] <= 0:
+                    raise ValueError(f"{label} must be finite and greater than zero.")
+            if not 0 <= data['angle'] <= 90:
+                raise ValueError("Impact angle must be finite and between 0 and 90 degrees.")
+
+            items = self.list_widget.selectedItems()
+            if not items:
+                raise ValueError("Select at least one ballistic limit equation.")
+            models = {
+                "New non-optimum (NNO)": ('NNO_curve', 'dc_NNO', 'New non-optimum (NNO)'),
+                "Christiansen-modified NNO": ('modNNO_curve', 'dc_modNNO', 'Christiansen-modified NNO'),
+                "Reimerdes-modified NNO": ('reimerdes_curve', 'dc_reimerdes', 'Reimerdes'),
+                "JSC Whipple": ('JSCwhipple_curve', 'dc_JSCwhipple', 'JSC Whipple'),
+                "JSC Whipple (mod)": ('modJSCwhipple_curve', 'dc_modJSCwhipple', 'JSC Whipple (mod)'),
+            }
+            velocities = np.linspace(0.1, 15, 150)  # units = km/s
+            df_results = pd.DataFrame({'velocity': velocities})
+            plot_curves = []
+            for item in items:
+                function, column, label = models[item.text()]
+                diameters = np.asarray(self.packages[function](data, velocities))
+                if (diameters.shape != velocities.shape
+                        or not np.issubdtype(diameters.dtype, np.number) or not np.isrealobj(diameters)
+                        or not np.isfinite(diameters).all() or np.any(diameters <= 0)):
+                    raise ValueError(f"{label} returned an invalid diameter curve.")
+                df_results[column] = diameters
+                plot_curves.append((label, diameters))
+            df_config = pd.DataFrame([data])
 
             ## Create a plot window
             self.plot_window = PlotWindow()
@@ -437,40 +397,10 @@ class MyApp(QWidget):
             ## Create a plot
             ax = self.plot_window.figure.add_subplot(111)
 
-            ## Call the ballistic limit equation
-            velocities = self.packages['np'].linspace(0.1, 15, 150)  # units = km/s
-            df_plot = pd.DataFrame(self.packages['np'].repeat(df.values, len(velocities), axis=0), columns=df.columns)
-            df_plot['velocity'] = velocities
-            pltmax = 0
-            df_config = df_plot.iloc[[0]].drop(columns=['velocity']) 
-            df_results = df_plot[['velocity']].copy()
-            for item in self.list_widget.selectedItems():
+            pltmax = max(diameters[len(velocities)//2] for _, diameters in plot_curves)
+            for label, diameters in plot_curves:
                 color, line_style = next(color_line_style_cycler)
-                if item.text() == "New non-optimum (NNO)":
-                    df_plot['dc_NNO'] = df_plot.apply(self.packages['NNO_performance'],axis=1)
-                    ax.plot(df_plot['velocity'],df_plot['dc_NNO'],color=color,linestyle=line_style,label='New non-optimum (NNO)')
-                    pltmax = max(pltmax, df_plot['dc_NNO'][len(velocities)/2])
-                    df_results.insert(len(df_results.columns), 'dc_NNO', df_plot['dc_NNO'])
-                elif item.text() == "Christiansen-modified NNO":
-                    df_plot['dc_modNNO'] = df_plot.apply(self.packages['modNNO_performance'],axis=1)
-                    ax.plot(df_plot['velocity'],df_plot['dc_modNNO'],color=color,linestyle=line_style,label='Christiansen-modified NNO')
-                    pltmax = max(pltmax, df_plot['dc_modNNO'][len(velocities)/2])
-                    df_results.insert(len(df_results.columns), 'dc_modNNO', df_plot['dc_modNNO'])
-                elif item.text() == "Reimerdes-modified NNO":
-                    df_plot['dc_reimerdes'] = df_plot.apply(self.packages['reimerdes_performance'],axis=1)
-                    ax.plot(df_plot['velocity'],df_plot['dc_reimerdes'],color=color,linestyle=line_style,label='Reimerdes')
-                    pltmax = max(pltmax, df_plot['dc_reimerdes'][len(velocities)/2])
-                    df_results.insert(len(df_results.columns), 'dc_reimerdes', df_plot['dc_reimerdes'])
-                elif item.text() == "JSC Whipple":
-                    df_plot['dc_JSCwhipple'] = df_plot.apply(self.packages['JSCwhipple_performance'],axis=1)
-                    ax.plot(df_plot['velocity'],df_plot['dc_JSCwhipple'],color=color,linestyle=line_style,label='JSC Whipple')
-                    pltmax = max(pltmax, df_plot['dc_JSCwhipple'][len(velocities)/2])
-                    df_results.insert(len(df_results.columns), 'dc_JSCwhipple', df_plot['dc_JSCwhipple'])
-                elif item.text() == "JSC Whipple (mod)":
-                    df_plot['dc_modJSCwhipple'] = df_plot.apply(self.packages['modJSCwhipple_performance'],axis=1)
-                    ax.plot(df_plot['velocity'],df_plot['dc_modJSCwhipple'],color=color,linestyle=line_style,label='JSC Whipple (mod)')  
-                    pltmax = max(pltmax, df_plot['dc_modJSCwhipple'][len(velocities)/2])  
-                    df_results.insert(len(df_results.columns), 'dc_modJSCwhipple', df_plot['dc_modJSCwhipple'])
+                ax.plot(velocities, diameters, color=color, linestyle=line_style, label=label)
 
             ## If the 'include test data' checkbox is ticked, plot the test data
             if self.plot_test_data_checkbox.isChecked():
@@ -508,45 +438,31 @@ class MyApp(QWidget):
             self.plot_window.show()
 
             ## If the save_plot_checkbox is checked, save the plot
-            if self.save_plot_checkbox.isChecked():
-                ## Check if the "results" directory exists, and create it if it doesn't
-                results_dir = os.path.join(root_dir, "results")
-                if not os.path.exists(results_dir):
-                    os.makedirs(results_dir)
+            save_plot = self.save_plot_checkbox.isChecked()
+            save_data = self.save_data_checkbox.isChecked()
+            if save_plot or save_data:
+                results_dir, now_str = create_run_directory(root_dir)
 
-                self.plot_window.figure.savefig(os.path.join(root_dir,"results",f"plot_{now_str}.png"))
+            if save_plot:
+                self.plot_window.figure.savefig(results_dir / f"plot_{now_str}.png")
 
             ## If the save_data_checkbox is checked, save the velocity and critical diameter data, as well as config data
-            if self.save_data_checkbox.isChecked():
-                ## Check if the "results" directory exists, and create it if it doesn't
-                results_dir = os.path.join(root_dir, "results")
-                if not os.path.exists(results_dir):
-                    os.makedirs(results_dir)
-                
+            if save_data:
                 df_config['wall_yield'] = df_config['wall_yield']/0.145038  # convert ksi to MPa
 
                 ## Write the output data to a CSV file
-                df_results.to_csv(os.path.join(root_dir,"results",f"blc_data_{now_str}.csv"), index=False)     
-                df_config.to_csv(os.path.join(root_dir,"results",f"config_data_{now_str}.csv"), index=False)      
+                df_results.to_csv(results_dir / f"blc_data_{now_str}.csv", index=False)
+                write_config_csv(df_config, results_dir / f"config_data_{now_str}.csv")
 
                 if self.plot_test_data_checkbox.isChecked():
                     # write the relevant test data to file
-                    df_filtered_test_data.to_csv(os.path.join(root_dir,"results",f"test_data_{now_str}.csv"), index=False)  
+                    df_filtered_test_data.to_csv(results_dir / f"test_data_{now_str}.csv", index=False)
 
-        except ValueError as e:
-            QMessageBox.critical(self, "Error", e.args[0])         
+        except (ImportError, ValueError, OSError) as e:
+            QMessageBox.critical(self, "Error", str(e))
 
 ## ------------------------------------------------- ##
 # Run the application
 ## ------------------------------------------------- ##            
-try:
-    app = QApplication(sys.argv)
-    window = MyApp()
-    window.show()
-    sys.exit(app.exec_())
-except Exception as e:
-    ## Handle exception
-    print(f"An error occurred: {e}")
-finally:
-    ## This code will run whether an exception occurred or not
-    os.system('reset')
+if __name__ == "__main__":
+    sys.exit(run_standalone(MyApp))

@@ -1,0 +1,2065 @@
+{
+  "schema_version": 2,
+  "tolerances": {
+    "regression": {
+      "rtol": 1e-06,
+      "atol_cm": 1e-09,
+      "reason": "Stored Python curves; allow numerical rounding, not physical model changes."
+    },
+    "reference": {
+      "rtol": 0.01,
+      "atol_cm": 1e-06,
+      "reason": "Independent reference calculations may use rounded material properties and MPa/ksi conversions."
+    }
+  },
+  "workbooks": {
+    "enhancedMLI.xlsx": {
+      "model": "mli",
+      "reference_header_row": 14,
+      "notes_by_column": {
+        "E": [
+          "Suspected discrepancy in the reference report: the transition to the hypervelocity regime is given as V>=6.4/(cos(theta))^0.25. For 0/45/60 degrees this gives V_hv=6.40/6.98/7.61 km/s. However in the validation plot for configuration 3 (Fig. 5) the curve appears to transition at 6.5/7.0/8.0 km/s. "
+        ]
+      },
+      "reference_pairs": {
+        "C": [
+          "A",
+          "B"
+        ],
+        "D": [
+          "D",
+          "E"
+        ],
+        "E": [
+          "G",
+          "H"
+        ],
+        "F": [
+          "K",
+          "L"
+        ],
+        "G": [
+          "K",
+          "M"
+        ]
+      },
+      "reference_tolerances_by_column": {
+        "C": {
+          "rtol": 0.05,
+          "atol_cm": 0.002,
+          "reason": "Figure 5 was read from screen; allow 5% plus 0.002 cm digitization error. These are provisional acceptance limits, not model uncertainty."
+        },
+        "D": {
+          "rtol": 0.05,
+          "atol_cm": 0.002,
+          "reason": "Same digitized Figure 5."
+        },
+        "E": {
+          "rtol": 0.05,
+          "atol_cm": 0.002,
+          "reason": "Same digitized Figure 5."
+        }
+      },
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "type": "Enhanced",
+            "target_mat": "AA6061-T651",
+            "wall_thick": 0.0306296296296296,
+            "wall_density": 2.7,
+            "bumper_AD": 0.092,
+            "wall_AD": 0.0827,
+            "MLI_AD": 0.035,
+            "thickness": 3.32
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "target_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "bumper_AD": "(g/cm2)",
+            "wall_AD": "(g/cm2)",
+            "MLI_AD": "(g/cm2)",
+            "thickness": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "enhancedMLI.xlsx",
+            "sha256": "be1c440637df743e2fee8e548fa4aaffb16608bf99cb7d3e798558b75858001e",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/enhancedMLI.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 45.0,
+            "type": "Enhanced",
+            "target_mat": "AA6061-T651",
+            "wall_thick": 0.0306296296296296,
+            "wall_density": 2.7,
+            "bumper_AD": 0.092,
+            "wall_AD": 0.0827,
+            "MLI_AD": 0.035,
+            "thickness": 3.32
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "target_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "bumper_AD": "(g/cm2)",
+            "wall_AD": "(g/cm2)",
+            "MLI_AD": "(g/cm2)",
+            "thickness": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "enhancedMLI.xlsx",
+            "sha256": "be1c440637df743e2fee8e548fa4aaffb16608bf99cb7d3e798558b75858001e",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/enhancedMLI.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 60.0,
+            "type": "Enhanced",
+            "target_mat": "AA6061-T651",
+            "wall_thick": 0.0306296296296296,
+            "wall_density": 2.7,
+            "bumper_AD": 0.092,
+            "wall_AD": 0.0827,
+            "MLI_AD": 0.035,
+            "thickness": 3.32
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "target_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "bumper_AD": "(g/cm2)",
+            "wall_AD": "(g/cm2)",
+            "MLI_AD": "(g/cm2)",
+            "thickness": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "enhancedMLI.xlsx",
+            "sha256": "be1c440637df743e2fee8e548fa4aaffb16608bf99cb7d3e798558b75858001e",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/enhancedMLI.xlsx"
+          }
+        },
+        "F": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "type": "Baseline",
+            "target_mat": "AA2024-T4",
+            "wall_thick": 0.1,
+            "wall_density": 2.77,
+            "bumper_AD": 0.188,
+            "wall_AD": 0.277,
+            "MLI_AD": 0.0,
+            "thickness": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "target_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "bumper_AD": "(g/cm2)",
+            "wall_AD": "(g/cm2)",
+            "MLI_AD": "(g/cm2)",
+            "thickness": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "enhancedMLI.xlsx",
+            "sha256": "be1c440637df743e2fee8e548fa4aaffb16608bf99cb7d3e798558b75858001e",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "F",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/enhancedMLI.xlsx"
+          }
+        },
+        "G": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "type": "Toughened",
+            "target_mat": "AA2024-T4",
+            "wall_thick": 0.1,
+            "wall_density": 2.77,
+            "bumper_AD": 0.307,
+            "wall_AD": 0.277,
+            "MLI_AD": 0.0,
+            "thickness": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "target_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "bumper_AD": "(g/cm2)",
+            "wall_AD": "(g/cm2)",
+            "MLI_AD": "(g/cm2)",
+            "thickness": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "enhancedMLI.xlsx",
+            "sha256": "be1c440637df743e2fee8e548fa4aaffb16608bf99cb7d3e798558b75858001e",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "G",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/enhancedMLI.xlsx"
+          }
+        }
+      }
+    },
+    "meshDB.xlsx": {
+      "model": "mesh",
+      "reference_header_row": 22,
+      "notes_by_column": {
+        "D": [
+          "The original Python metadata listed angle 0 and AD_MLI 45, while the reference angle was 45 degrees and MLI AD was 0. This has been corrected in the JSON file."
+        ],
+        "E": [
+          "The original Python metadata listed angle 0 and AD_MLI 75, while the reference angle was 75 degrees and MLI AD was 0. This has been corrected in the JSON file. ."
+        ]
+      },
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "mesh_AD": 0.3,
+            "bumper_mat": "AA2219-T87",
+            "bumper_thick": 0.2,
+            "bumper_density": 2.851,
+            "kevlar_AD": 0.5078,
+            "standoff": 11.43,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_yield": 360.0,
+            "AD_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "mesh_AD": "(g/cm2)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "kevlar_AD": "(g/cm2)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "meshDB.xlsx",
+            "sha256": "cefb34c257707522a1fe3ca078ec7b24b3919e23cf492f5613815b8cc1c60fe4",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/meshDB.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 45.0,
+            "mesh_AD": 0.3,
+            "bumper_mat": "AA2219-T87",
+            "bumper_thick": 0.2,
+            "bumper_density": 2.851,
+            "kevlar_AD": 0.5078,
+            "standoff": 11.43,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_yield": 360.0,
+            "AD_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "mesh_AD": "(g/cm2)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "kevlar_AD": "(g/cm2)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "meshDB.xlsx",
+            "sha256": "cefb34c257707522a1fe3ca078ec7b24b3919e23cf492f5613815b8cc1c60fe4",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/meshDB.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 75.0,
+            "mesh_AD": 0.3,
+            "bumper_mat": "AA2219-T87",
+            "bumper_thick": 0.2,
+            "bumper_density": 2.851,
+            "kevlar_AD": 0.5078,
+            "standoff": 11.43,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_yield": 360.0,
+            "AD_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "mesh_AD": "(g/cm2)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "kevlar_AD": "(g/cm2)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "meshDB.xlsx",
+            "sha256": "cefb34c257707522a1fe3ca078ec7b24b3919e23cf492f5613815b8cc1c60fe4",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/meshDB.xlsx"
+          }
+        }
+      }
+    },
+    "multishock.xlsx": {
+      "model": "multishock",
+      "reference_header_row": 26,
+        "notes_by_column": {
+          "F": [
+          "Suspected discrepancy in the previous pyBLOSSUM validation curve. The rear wall material was Nextel but the pyBLOSSUM validation used an aluminium rear wall. "
+          ],
+          "G": [
+          "Suspected discrepancy in the previous pyBLOSSUM validation curve. The rear wall material was Kevlar but the pyBLOSSUM validation used a Nextel rear wall. "
+          ]
+        },
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "type": "Hybrid shield",
+            "bumper_AD": 0.751,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_AD": 0.0,
+            "wall_yield": 360.0,
+            "standoff": 11.43
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "bumper_AD": "(g/cm2)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_AD": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "standoff": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "multishock.xlsx",
+            "sha256": "f9a07e5f518981c0fa80303a6fc8eec4e0d68d78f4e1e24dc6093650f3f22a9b",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 15,
+            "last_row": 164,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/multishock.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 45.0,
+            "type": "Hybrid shield",
+            "bumper_AD": 0.751,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_AD": 0.0,
+            "wall_yield": 360.0,
+            "standoff": 11.43
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "bumper_AD": "(g/cm2)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_AD": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "standoff": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "multishock.xlsx",
+            "sha256": "f9a07e5f518981c0fa80303a6fc8eec4e0d68d78f4e1e24dc6093650f3f22a9b",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 15,
+            "last_row": 164,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/multishock.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 15.0,
+            "type": "Aluminium rear wall",
+            "bumper_AD": 0.6,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_AD": 0.0,
+            "wall_yield": 360.0,
+            "standoff": 11.43
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "bumper_AD": "(g/cm2)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_AD": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "standoff": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "multishock.xlsx",
+            "sha256": "f9a07e5f518981c0fa80303a6fc8eec4e0d68d78f4e1e24dc6093650f3f22a9b",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 15,
+            "last_row": 164,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/multishock.xlsx"
+          }
+        },
+        "F": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 30.0,
+            "type": "Nextel rear wall",
+            "bumper_AD": 0.6,
+            "wall_mat": "Nextel",
+            "wall_thick": 0.0,
+            "wall_density": 0.0,
+            "wall_AD": 0.3,
+            "wall_yield": 0.0,
+            "standoff": 12.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "bumper_AD": "(g/cm2)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_AD": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "standoff": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "multishock.xlsx",
+            "sha256": "f9a07e5f518981c0fa80303a6fc8eec4e0d68d78f4e1e24dc6093650f3f22a9b",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "F",
+            "first_row": 15,
+            "last_row": 164,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/multishock.xlsx"
+          }
+        },
+        "G": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 0.0,
+            "type": "Kevlar rear wall",
+            "bumper_AD": 0.6,
+            "wall_mat": "Kevlar",
+            "wall_thick": 0.0,
+            "wall_density": 0.0,
+            "wall_AD": 0.3,
+            "wall_yield": 0.0,
+            "standoff": 15.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "bumper_AD": "(g/cm2)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_AD": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "standoff": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "multishock.xlsx",
+            "sha256": "f9a07e5f518981c0fa80303a6fc8eec4e0d68d78f4e1e24dc6093650f3f22a9b",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "G",
+            "first_row": 15,
+            "last_row": 164,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/multishock.xlsx"
+          }
+        }
+      }
+    },
+    "sandwichPanel.xlsx": {
+      "model": "sandwich",
+      "reference_header_row": 24,
+      "notes": [
+        "The original Python wall_density unit label is g/cm2; model inputs use these stored numbers as density in g/cm3, following the existing implementation. No numerical conversion or input correction is applied."
+      ],
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 45.0,
+            "bumper_mat": "AA2024-T4",
+            "bumper_thick": 0.16,
+            "bumper_density": 2.7,
+            "standoff": 5.0,
+            "wall_mat": "AA2017-T4",
+            "wall_thick": 0.16,
+            "wall_density": 2.7,
+            "wall_yield": 435.0,
+            "AD_MLI": 0.015,
+            "SP_mass": "N/A",
+            "SP_AD": "N/A",
+            "foam_density": "N/A",
+            "foam_AD": "N/A",
+            "type": "Honeycomb"
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "SP_mass": "(g)",
+            "SP_AD": "(g/cm2)",
+            "foam_density": "(g/cm3)",
+            "foam_AD": "(g/cm2)",
+            "type": "(-)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "sandwichPanel.xlsx",
+            "sha256": "355400ed43cf9a4cdfdbbc0bed5142f6df08bc1c0baa7daf8e9deb5725f92645",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 20,
+            "last_row": 169,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/sandwichPanel.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 0.0,
+            "bumper_mat": "AA2024-T4",
+            "bumper_thick": 0.16,
+            "bumper_density": 2.7,
+            "standoff": 5.0,
+            "wall_mat": "AA2017-T4",
+            "wall_thick": 0.16,
+            "wall_density": 2.7,
+            "wall_yield": 435.0,
+            "AD_MLI": 0.0,
+            "SP_mass": "N/A",
+            "SP_AD": "N/A",
+            "foam_density": "N/A",
+            "foam_AD": "N/A",
+            "type": "Honeycomb"
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "SP_mass": "(g)",
+            "SP_AD": "(g/cm2)",
+            "foam_density": "(g/cm3)",
+            "foam_AD": "(g/cm2)",
+            "type": "(-)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "sandwichPanel.xlsx",
+            "sha256": "355400ed43cf9a4cdfdbbc0bed5142f6df08bc1c0baa7daf8e9deb5725f92645",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 20,
+            "last_row": 169,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/sandwichPanel.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 70.0,
+            "bumper_mat": "AA2024-T4",
+            "bumper_thick": 0.16,
+            "bumper_density": 2.7,
+            "standoff": 5.0,
+            "wall_mat": "AA2017-T4",
+            "wall_thick": 0.16,
+            "wall_density": 2.7,
+            "wall_yield": 435.0,
+            "AD_MLI": 0.0,
+            "SP_mass": "N/A",
+            "SP_AD": "N/A",
+            "foam_density": "N/A",
+            "foam_AD": "N/A",
+            "type": "Honeycomb"
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "SP_mass": "(g)",
+            "SP_AD": "(g/cm2)",
+            "foam_density": "(g/cm3)",
+            "foam_AD": "(g/cm2)",
+            "type": "(-)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "sandwichPanel.xlsx",
+            "sha256": "355400ed43cf9a4cdfdbbc0bed5142f6df08bc1c0baa7daf8e9deb5725f92645",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 20,
+            "last_row": 169,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/sandwichPanel.xlsx"
+          }
+        },
+        "F": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 0.0,
+            "bumper_mat": "CFRP",
+            "bumper_thick": 0.145,
+            "bumper_density": 1.8,
+            "standoff": 5.06,
+            "wall_mat": "CFRP",
+            "wall_thick": 0.145,
+            "wall_density": 1.8,
+            "wall_yield": 0.0,
+            "AD_MLI": 0.0,
+            "SP_mass": "N/A",
+            "SP_AD": "N/A",
+            "foam_density": "N/A",
+            "foam_AD": "N/A",
+            "type": "Honeycomb"
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "SP_mass": "(g)",
+            "SP_AD": "(g/cm2)",
+            "foam_density": "(g/cm3)",
+            "foam_AD": "(g/cm2)",
+            "type": "(-)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "sandwichPanel.xlsx",
+            "sha256": "355400ed43cf9a4cdfdbbc0bed5142f6df08bc1c0baa7daf8e9deb5725f92645",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "F",
+            "first_row": 20,
+            "last_row": 169,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/sandwichPanel.xlsx"
+          }
+        },
+        "G": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 60.0,
+            "bumper_mat": "CFRP",
+            "bumper_thick": 0.145,
+            "bumper_density": 1.8,
+            "standoff": 5.06,
+            "wall_mat": "CFRP",
+            "wall_thick": 0.145,
+            "wall_density": 1.8,
+            "wall_yield": 0.0,
+            "AD_MLI": 0.0,
+            "SP_mass": "N/A",
+            "SP_AD": "N/A",
+            "foam_density": "N/A",
+            "foam_AD": "N/A",
+            "type": "Honeycomb"
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "SP_mass": "(g)",
+            "SP_AD": "(g/cm2)",
+            "foam_density": "(g/cm3)",
+            "foam_AD": "(g/cm2)",
+            "type": "(-)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "sandwichPanel.xlsx",
+            "sha256": "355400ed43cf9a4cdfdbbc0bed5142f6df08bc1c0baa7daf8e9deb5725f92645",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "G",
+            "first_row": 20,
+            "last_row": 169,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/sandwichPanel.xlsx"
+          }
+        },
+        "H": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.79,
+            "angle": 0.0,
+            "bumper_mat": "AA6061-T651",
+            "bumper_thick": 0.0254,
+            "bumper_density": 2.7,
+            "standoff": 2.54,
+            "wall_mat": "AA6061-T651",
+            "wall_thick": 0.0254,
+            "wall_density": 2.7,
+            "wall_yield": 276.0,
+            "AD_MLI": 0.0,
+            "SP_mass": 0.0,
+            "SP_AD": 0.75,
+            "foam_density": 0.0,
+            "foam_AD": 0.0,
+            "type": "Foam"
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "SP_mass": "(g)",
+            "SP_AD": "(g/cm2)",
+            "foam_density": "(g/cm3)",
+            "foam_AD": "(g/cm2)",
+            "type": "(-)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "sandwichPanel.xlsx",
+            "sha256": "355400ed43cf9a4cdfdbbc0bed5142f6df08bc1c0baa7daf8e9deb5725f92645",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "H",
+            "first_row": 20,
+            "last_row": 169,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/sandwichPanel.xlsx"
+          }
+        },
+        "I": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.79,
+            "angle": 60.0,
+            "bumper_mat": "AA6061-T651",
+            "bumper_thick": 0.0254,
+            "bumper_density": 2.7,
+            "standoff": 1.27,
+            "wall_mat": "AA6061-T651",
+            "wall_thick": 0.0254,
+            "wall_density": 2.7,
+            "wall_yield": 276.0,
+            "AD_MLI": 0.0,
+            "SP_mass": 0.0,
+            "SP_AD": 0.0,
+            "foam_density": 0.2828,
+            "foam_AD": 0.0,
+            "type": "Foam"
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm2)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "SP_mass": "(g)",
+            "SP_AD": "(g/cm2)",
+            "foam_density": "(g/cm3)",
+            "foam_AD": "(g/cm2)",
+            "type": "(-)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "sandwichPanel.xlsx",
+            "sha256": "355400ed43cf9a4cdfdbbc0bed5142f6df08bc1c0baa7daf8e9deb5725f92645",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "I",
+            "first_row": 20,
+            "last_row": 169,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/sandwichPanel.xlsx"
+          }
+        }
+      }
+    },
+    "singleWall.xlsx": {
+      "model": "single",
+      "reference_header_row": 24,
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 70.0,
+            "type": "ST",
+            "target_mat": "AA99.9%",
+            "shield_thick": 0.2,
+            "shield_density": 7.8,
+            "shield_HB": 0.0,
+            "shield_C": 0.0,
+            "MLI_AD": 0.0,
+            "mode": "perforate"
+          },
+          "units": {
+            "proj_mat": "-",
+            "proj_density": "g/cm3",
+            "angle": "deg",
+            "type": "-",
+            "target_mat": "-",
+            "shield_thick": "cm",
+            "shield_density": "g/cm3",
+            "shield_HB": "HB",
+            "shield_C": "km/s",
+            "MLI_AD": "g/cm2",
+            "mode": "-"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "singleWall.xlsx",
+            "sha256": "0267392d4a22432bcb473ffec5174c1ffa4ce17cdca651e7e0136eec4d70a793",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/singleWall.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "type": "TI",
+            "target_mat": "AA99.9%",
+            "shield_thick": 0.15,
+            "shield_density": 4.73,
+            "shield_HB": 257.0,
+            "shield_C": 4.26,
+            "MLI_AD": 0.0,
+            "mode": "detached_spall"
+          },
+          "units": {
+            "proj_mat": "-",
+            "proj_density": "g/cm3",
+            "angle": "deg",
+            "type": "-",
+            "target_mat": "-",
+            "shield_thick": "cm",
+            "shield_density": "g/cm3",
+            "shield_HB": "HB",
+            "shield_C": "km/s",
+            "MLI_AD": "g/cm2",
+            "mode": "-"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "singleWall.xlsx",
+            "sha256": "0267392d4a22432bcb473ffec5174c1ffa4ce17cdca651e7e0136eec4d70a793",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/singleWall.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 60.0,
+            "type": "AL",
+            "target_mat": "AA6061-T651",
+            "shield_thick": 1.5,
+            "shield_density": 2.713,
+            "shield_HB": 73.0,
+            "shield_C": 5.069,
+            "MLI_AD": 0.0,
+            "mode": "detached_spall"
+          },
+          "units": {
+            "proj_mat": "-",
+            "proj_density": "g/cm3",
+            "angle": "deg",
+            "type": "-",
+            "target_mat": "-",
+            "shield_thick": "cm",
+            "shield_density": "g/cm3",
+            "shield_HB": "HB",
+            "shield_C": "km/s",
+            "MLI_AD": "g/cm2",
+            "mode": "-"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "singleWall.xlsx",
+            "sha256": "0267392d4a22432bcb473ffec5174c1ffa4ce17cdca651e7e0136eec4d70a793",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/singleWall.xlsx"
+          }
+        },
+        "F": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 0.0,
+            "type": "CFRP",
+            "target_mat": "AA99.9%",
+            "shield_thick": 0.38,
+            "shield_density": 1.8,
+            "shield_HB": 0.0,
+            "shield_C": 0.0,
+            "MLI_AD": 0.058,
+            "mode": "perforate"
+          },
+          "units": {
+            "proj_mat": "-",
+            "proj_density": "g/cm3",
+            "angle": "deg",
+            "type": "-",
+            "target_mat": "-",
+            "shield_thick": "cm",
+            "shield_density": "g/cm3",
+            "shield_HB": "HB",
+            "shield_C": "km/s",
+            "MLI_AD": "g/cm2",
+            "mode": "-"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "singleWall.xlsx",
+            "sha256": "0267392d4a22432bcb473ffec5174c1ffa4ce17cdca651e7e0136eec4d70a793",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "F",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/singleWall.xlsx"
+          }
+        },
+        "G": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 70.0,
+            "type": "fibreglass",
+            "target_mat": "AA99.9%",
+            "shield_thick": 0.8,
+            "shield_density": 1.8,
+            "shield_HB": 0.0,
+            "shield_C": 0.0,
+            "MLI_AD": 0.0,
+            "mode": "perforate"
+          },
+          "units": {
+            "proj_mat": "-",
+            "proj_density": "g/cm3",
+            "angle": "deg",
+            "type": "-",
+            "target_mat": "-",
+            "shield_thick": "cm",
+            "shield_density": "g/cm3",
+            "shield_HB": "HB",
+            "shield_C": "km/s",
+            "MLI_AD": "g/cm2",
+            "mode": "-"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "singleWall.xlsx",
+            "sha256": "0267392d4a22432bcb473ffec5174c1ffa4ce17cdca651e7e0136eec4d70a793",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "G",
+            "first_row": 14,
+            "last_row": 163,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/singleWall.xlsx"
+          }
+        }
+      }
+    },
+    "stuffedWhipple.xlsx": {
+      "model": "stuffed",
+      "reference_header_row": 17,
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "bumper_mat": "AA2219-T87",
+            "bumper_thick": 0.2,
+            "bumper_density": 2.851,
+            "kevlar_AD": 0.4039,
+            "nextel_AD": 0.4039,
+            "standoff": 11.43,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_yield": 360.0,
+            "AD_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": null,
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "kevlar_AD": "(g/cm2)",
+            "nextel_AD": "(g/cm2)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "stuffedWhipple.xlsx",
+            "sha256": "51faa1e704596f20ca89b3176fda652b0b9af162bbe2d848cc9b77f35cc60fb2",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/stuffedWhipple.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 45.0,
+            "bumper_mat": "AA2219-T87",
+            "bumper_thick": 0.2,
+            "bumper_density": 2.851,
+            "kevlar_AD": 0.4039,
+            "nextel_AD": 0.4039,
+            "standoff": 11.43,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_yield": 360.0,
+            "AD_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": null,
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "kevlar_AD": "(g/cm2)",
+            "nextel_AD": "(g/cm2)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "stuffedWhipple.xlsx",
+            "sha256": "51faa1e704596f20ca89b3176fda652b0b9af162bbe2d848cc9b77f35cc60fb2",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/stuffedWhipple.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 75.0,
+            "bumper_mat": "AA2219-T87",
+            "bumper_thick": 0.2,
+            "bumper_density": 2.851,
+            "kevlar_AD": 0.4039,
+            "nextel_AD": 0.4039,
+            "standoff": 11.43,
+            "wall_mat": "AA2219-T87",
+            "wall_thick": 0.48,
+            "wall_density": 2.851,
+            "wall_yield": 360.0,
+            "AD_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": null,
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "kevlar_AD": "(g/cm2)",
+            "nextel_AD": "(g/cm2)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "stuffedWhipple.xlsx",
+            "sha256": "51faa1e704596f20ca89b3176fda652b0b9af162bbe2d848cc9b77f35cc60fb2",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/stuffedWhipple.xlsx"
+          }
+        }
+      }
+    },
+    "transparent.xlsx": {
+      "model": "transparent",
+      "reference_header_row": 18,
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "type": "Quartz",
+            "mode": "Perforate",
+            "thickness": 1.5,
+            "max_damage": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "mode": "(-)",
+            "thickness": "(cm)",
+            "max_damage": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "transparent.xlsx",
+            "sha256": "976e4c6efcbdbf77b8b410f11a0a8bc1d2d32603b54d97333aaffe45fdc9a0d9",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 11,
+            "last_row": 160,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/transparent.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 70.0,
+            "type": "Quartz",
+            "mode": "Perforate",
+            "thickness": 1.5,
+            "max_damage": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "mode": "(-)",
+            "thickness": "(cm)",
+            "max_damage": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "transparent.xlsx",
+            "sha256": "976e4c6efcbdbf77b8b410f11a0a8bc1d2d32603b54d97333aaffe45fdc9a0d9",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 11,
+            "last_row": 160,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/transparent.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 45.0,
+            "type": "Quartz",
+            "mode": "Damage",
+            "thickness": 0.0,
+            "max_damage": 3.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "mode": "(-)",
+            "thickness": "(cm)",
+            "max_damage": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "transparent.xlsx",
+            "sha256": "976e4c6efcbdbf77b8b410f11a0a8bc1d2d32603b54d97333aaffe45fdc9a0d9",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 11,
+            "last_row": 160,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/transparent.xlsx"
+          }
+        },
+        "F": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 75.0,
+            "type": "Polycarbonate",
+            "mode": "Incipient spall",
+            "thickness": 0.95,
+            "max_damage": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "mode": "(-)",
+            "thickness": "(cm)",
+            "max_damage": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "transparent.xlsx",
+            "sha256": "976e4c6efcbdbf77b8b410f11a0a8bc1d2d32603b54d97333aaffe45fdc9a0d9",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "F",
+            "first_row": 11,
+            "last_row": 160,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/transparent.xlsx"
+          }
+        },
+        "G": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "type": "Polycarbonate",
+            "mode": "Detached spall",
+            "thickness": 0.95,
+            "max_damage": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/cm3)",
+            "angle": "(deg)",
+            "type": "(-)",
+            "mode": "(-)",
+            "thickness": "(cm)",
+            "max_damage": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "transparent.xlsx",
+            "sha256": "976e4c6efcbdbf77b8b410f11a0a8bc1d2d32603b54d97333aaffe45fdc9a0d9",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "G",
+            "first_row": 11,
+            "last_row": 160,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/transparent.xlsx"
+          }
+        }
+      }
+    },
+    "tripleWall.xlsx": {
+      "model": "triple",
+      "reference_header_row": 26,
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 0.0,
+            "outerBumper_mat": "CFRP",
+            "outerBumper_thick": 0.145,
+            "outerBumper_density": 1.8,
+            "standoff1": 5.06,
+            "innerBumper_mat": "CFRP",
+            "innerBumper_thick": 0.145,
+            "innerBumper_density": 1.8,
+            "standoff2": 10.0,
+            "wall_mat": "AA2024-T4",
+            "wall_thick": 0.15,
+            "wall_density": 2.78,
+            "wall_yield": 410.0,
+            "AD_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "outerBumper_mat": "(-)",
+            "outerBumper_thick": "(cm)",
+            "outerBumper_density": "(g/cm3)",
+            "standoff1": "(cm)",
+            "innerBumper_mat": "(-)",
+            "innerBumper_thick": "(cm)",
+            "innerBumper_density": "(g/cm3)",
+            "standoff2": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "tripleWall.xlsx",
+            "sha256": "0641dcb1f6dbf64082b5dfebcd3b9c4719a798eeb4b4867798617639887fb521",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 21,
+            "last_row": 170,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/tripleWall.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 45.0,
+            "outerBumper_mat": "CFRP",
+            "outerBumper_thick": 0.145,
+            "outerBumper_density": 1.8,
+            "standoff1": 5.06,
+            "innerBumper_mat": "CFRP",
+            "innerBumper_thick": 0.145,
+            "innerBumper_density": 1.8,
+            "standoff2": 10.0,
+            "wall_mat": "AA2024-T4",
+            "wall_thick": 0.15,
+            "wall_density": 2.78,
+            "wall_yield": 410.0,
+            "AD_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "outerBumper_mat": "(-)",
+            "outerBumper_thick": "(cm)",
+            "outerBumper_density": "(g/cm3)",
+            "standoff1": "(cm)",
+            "innerBumper_mat": "(-)",
+            "innerBumper_thick": "(cm)",
+            "innerBumper_density": "(g/cm3)",
+            "standoff2": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "tripleWall.xlsx",
+            "sha256": "0641dcb1f6dbf64082b5dfebcd3b9c4719a798eeb4b4867798617639887fb521",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 21,
+            "last_row": 170,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/tripleWall.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 0.0,
+            "outerBumper_mat": "AA1100-H14",
+            "outerBumper_thick": 0.041,
+            "outerBumper_density": 2.7,
+            "standoff1": 3.5,
+            "innerBumper_mat": "AA1100-H14",
+            "innerBumper_thick": 0.041,
+            "innerBumper_density": 2.7,
+            "standoff2": 0.0,
+            "wall_mat": "AA1100-H14",
+            "wall_thick": 0.15,
+            "wall_density": 2.7,
+            "wall_yield": 250.0,
+            "AD_MLI": 0.0447
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "outerBumper_mat": "(-)",
+            "outerBumper_thick": "(cm)",
+            "outerBumper_density": "(g/cm3)",
+            "standoff1": "(cm)",
+            "innerBumper_mat": "(-)",
+            "innerBumper_thick": "(cm)",
+            "innerBumper_density": "(g/cm3)",
+            "standoff2": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "tripleWall.xlsx",
+            "sha256": "0641dcb1f6dbf64082b5dfebcd3b9c4719a798eeb4b4867798617639887fb521",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 21,
+            "last_row": 170,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/tripleWall.xlsx"
+          }
+        },
+        "F": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 45.0,
+            "outerBumper_mat": "AA1100-H14",
+            "outerBumper_thick": 0.041,
+            "outerBumper_density": 2.7,
+            "standoff1": 3.5,
+            "innerBumper_mat": "AA1100-H14",
+            "innerBumper_thick": 0.041,
+            "innerBumper_density": 2.7,
+            "standoff2": 0.0,
+            "wall_mat": "AA1100-H14",
+            "wall_thick": 0.15,
+            "wall_density": 2.7,
+            "wall_yield": 250.0,
+            "AD_MLI": 0.0447
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "outerBumper_mat": "(-)",
+            "outerBumper_thick": "(cm)",
+            "outerBumper_density": "(g/cm3)",
+            "standoff1": "(cm)",
+            "innerBumper_mat": "(-)",
+            "innerBumper_thick": "(cm)",
+            "innerBumper_density": "(g/cm3)",
+            "standoff2": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "tripleWall.xlsx",
+            "sha256": "0641dcb1f6dbf64082b5dfebcd3b9c4719a798eeb4b4867798617639887fb521",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "F",
+            "first_row": 21,
+            "last_row": 170,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/tripleWall.xlsx"
+          }
+        },
+        "G": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 0.0,
+            "outerBumper_mat": "AA1100-H14",
+            "outerBumper_thick": 0.041,
+            "outerBumper_density": 2.7,
+            "standoff1": 3.5,
+            "innerBumper_mat": "AA1100-H14",
+            "innerBumper_thick": 0.041,
+            "innerBumper_density": 2.7,
+            "standoff2": 30.0,
+            "wall_mat": "AA1100-H14",
+            "wall_thick": 0.15,
+            "wall_density": 2.7,
+            "wall_yield": 250.0,
+            "AD_MLI": 0.0447
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "outerBumper_mat": "(-)",
+            "outerBumper_thick": "(cm)",
+            "outerBumper_density": "(g/cm3)",
+            "standoff1": "(cm)",
+            "innerBumper_mat": "(-)",
+            "innerBumper_thick": "(cm)",
+            "innerBumper_density": "(g/cm3)",
+            "standoff2": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "tripleWall.xlsx",
+            "sha256": "0641dcb1f6dbf64082b5dfebcd3b9c4719a798eeb4b4867798617639887fb521",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "G",
+            "first_row": 21,
+            "last_row": 170,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/tripleWall.xlsx"
+          }
+        },
+        "H": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 45.0,
+            "outerBumper_mat": "AA1100-H14",
+            "outerBumper_thick": 0.041,
+            "outerBumper_density": 2.7,
+            "standoff1": 3.5,
+            "innerBumper_mat": "AA1100-H14",
+            "innerBumper_thick": 0.041,
+            "innerBumper_density": 2.7,
+            "standoff2": 10.0,
+            "wall_mat": "AA1100-H14",
+            "wall_thick": 0.15,
+            "wall_density": 2.7,
+            "wall_yield": 250.0,
+            "AD_MLI": 0.0447
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "outerBumper_mat": "(-)",
+            "outerBumper_thick": "(cm)",
+            "outerBumper_density": "(g/cm3)",
+            "standoff1": "(cm)",
+            "innerBumper_mat": "(-)",
+            "innerBumper_thick": "(cm)",
+            "innerBumper_density": "(g/cm3)",
+            "standoff2": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "tripleWall.xlsx",
+            "sha256": "0641dcb1f6dbf64082b5dfebcd3b9c4719a798eeb4b4867798617639887fb521",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "H",
+            "first_row": 21,
+            "last_row": 170,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/tripleWall.xlsx"
+          }
+        }
+      }
+    },
+    "whipple.xlsx": {
+      "models_by_column": {
+        "C": "modified_jsc",
+        "D": "modified_jsc",
+        "E": "reimerdes",
+        "F": "reimerdes",
+        "G": "reimerdes"
+      },
+      "reference_header_row": 21,
+      "regression_tolerance": {
+        "rtol": 0.0015,
+        "atol_cm": 1e-06,
+        "reason": "Tighter checked SLSQP solves differ from historical Python curves by up to approximately 0.115%; independently checked in the unit suite."
+      },
+      "cases": {
+        "C": {
+          "inputs": {
+            "proj_mat": "AA99.9%",
+            "proj_density": 2.7,
+            "angle": 0.0,
+            "bumper_mat": "AA2024-T4",
+            "bumper_thick": 0.046,
+            "bumper_density": 2.77,
+            "standoff": 10.0,
+            "wall_mat": "AA7075-T6",
+            "wall_thick": 0.2,
+            "wall_density": 2.8,
+            "wall_yield": 503.0,
+            "AD_MLI": 0.0,
+            "S_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "S_MLI": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "whipple.xlsx",
+            "sha256": "c7339821b18dd65164dfcd3e3e006fc2711803259810c0f2059154229681cf2a",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "C",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/whipple.xlsx"
+          }
+        },
+        "D": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 45.0,
+            "bumper_mat": "AA6061-T651",
+            "bumper_thick": 0.07874,
+            "bumper_density": 2.7,
+            "standoff": 5.08,
+            "wall_mat": "AA6061-T651",
+            "wall_thick": 0.406,
+            "wall_density": 2.7,
+            "wall_yield": 276.0,
+            "AD_MLI": 0.0,
+            "S_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_thick": "(cm)",
+            "bumper_density": "(g/cm3)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_thick": "(cm)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(MPa)",
+            "AD_MLI": "(g/cm2)",
+            "S_MLI": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "whipple.xlsx",
+            "sha256": "c7339821b18dd65164dfcd3e3e006fc2711803259810c0f2059154229681cf2a",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "D",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/whipple.xlsx"
+          }
+        },
+        "E": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 70.0,
+            "bumper_mat": "AA6061-T6",
+            "bumper_density": 2.713,
+            "bumper_thick": 0.25,
+            "standoff": 4.0,
+            "wall_mat": "AA6061-T6",
+            "wall_density": 2.713,
+            "wall_yield": 35.0,
+            "wall_thick": 1.5,
+            "AD_MLI": 0.0,
+            "S_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_density": "(g/cm3)",
+            "bumper_thick": "(cm)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(ksi)",
+            "wall_thick": "(cm)",
+            "AD_MLI": "(g/cm2)",
+            "S_MLI": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "workbook": "whipple.xlsx",
+            "sha256": "c7339821b18dd65164dfcd3e3e006fc2711803259810c0f2059154229681cf2a",
+            "sheet": "pyBLOSSUM",
+            "velocity_column": "B",
+            "diameter_column": "E",
+            "first_row": 17,
+            "last_row": 166,
+            "git_commit": "fe0a7df862041a9ea8816197b32eb9009beac35b",
+            "git_path": "validation/whipple.xlsx"
+          }
+        },
+        "F": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 45.0,
+            "bumper_mat": "AA6061-T6",
+            "bumper_density": 2.713,
+            "bumper_thick": 0.25,
+            "standoff": 4.0,
+            "wall_mat": "AA6061-T6",
+            "wall_density": 2.713,
+            "wall_yield": 35.0,
+            "wall_thick": 1.5,
+            "AD_MLI": 0.0,
+            "S_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_density": "(g/cm3)",
+            "bumper_thick": "(cm)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(ksi)",
+            "wall_thick": "(cm)",
+            "AD_MLI": "(g/cm2)",
+            "S_MLI": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "source": "Initial pyBLOSSUM curve evaluated at the workbook velocities",
+            "code_sha256": {
+              "BLE_reimerdeswhipple.py": "d41e5f28a7dd110ef248a56ec97621e5ad14ae948c9aaed795da59aa3e826b57",
+              "curve_utils.py": "61b3aeb100e923ad0c5d9c19e9f441516643299971f1d7ec5840e166c8d28457",
+              "solver_utils.py": "91e4260e9864311bd09d01757d60f990f73cba5d1c02828ed3b2ff6c10460385"
+            }
+          }
+        },
+        "G": {
+          "inputs": {
+            "proj_mat": "AA2017-T4",
+            "proj_density": 2.8,
+            "angle": 0.0,
+            "bumper_mat": "AA6061-T6",
+            "bumper_density": 2.713,
+            "bumper_thick": 0.25,
+            "standoff": 4.0,
+            "wall_mat": "AA6061-T6",
+            "wall_density": 2.713,
+            "wall_yield": 35.0,
+            "wall_thick": 1.5,
+            "AD_MLI": 0.0,
+            "S_MLI": 0.0
+          },
+          "units": {
+            "proj_mat": "(-)",
+            "proj_density": "(g/ccm)",
+            "angle": "(deg)",
+            "bumper_mat": "(-)",
+            "bumper_density": "(g/cm3)",
+            "bumper_thick": "(cm)",
+            "standoff": "(cm)",
+            "wall_mat": "(-)",
+            "wall_density": "(g/cm3)",
+            "wall_yield": "(ksi)",
+            "wall_thick": "(cm)",
+            "AD_MLI": "(g/cm2)",
+            "S_MLI": "(cm)"
+          },
+          "baseline_points": 150,
+          "baseline_origin": {
+            "source": "Initial pyBLOSSUM curve evaluated at the workbook velocities",
+            "code_sha256": {
+              "BLE_reimerdeswhipple.py": "d41e5f28a7dd110ef248a56ec97621e5ad14ae948c9aaed795da59aa3e826b57",
+              "curve_utils.py": "61b3aeb100e923ad0c5d9c19e9f441516643299971f1d7ec5840e166c8d28457",
+              "solver_utils.py": "91e4260e9864311bd09d01757d60f990f73cba5d1c02828ed3b2ff6c10460385"
+            }
+          }
+        }
+      },
+      "notes_by_column": {
+        "E": [
+          "The reference workbook now uses column E for the 0-degree Reimerdes case. The original pyBLOSSUM baseline for this case ID used the previous 75-degree configuration."
+        ]
+      }
+    }
+  },
+  "baseline_file": "baselines.csv"
+}

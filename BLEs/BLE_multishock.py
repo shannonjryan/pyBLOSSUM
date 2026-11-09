@@ -44,7 +44,7 @@ def multishockNextel_performance(row):
     if row['velocity'] <= vLV:  # low velocity regime
         dc = KL*(CW*row['wall_AD']+CL*row['bumper_AD'])/((np.cos(anglerad))**(4/3)*row['proj_density']**0.5*row['velocity']**(2/3))
     elif row['velocity'] >= vHV:  # hypervelocity regime
-        dc = 1.24*row['wall_AD']**(1/3)*row['standoff']**(2/3)/(43.6**(1/3)*row['proj_density']**(1/3)*row['velocity']**(1/3)*(np.cos(anglerad))**(1/3))
+        dc = 1.24*row['wall_AD']**(1/3)*row['standoff']**(2/3)/(KH**(1/3)*row['proj_density']**(1/3)*row['velocity']**(1/3)*(np.cos(anglerad))**(1/3))
     else:  # shatter regime
         dcLV = KL*(CW*row['wall_AD']+CL*row['bumper_AD'])/((np.cos(anglerad))**(4/3)*row['proj_density']**0.5*vLV**(2/3))
         dcHV = 1.24*row['wall_AD']**(1/3)*row['standoff']**(2/3)/(KH**(1/3)*row['proj_density']**(1/3)*vHV**(1/3)*(np.cos(anglerad))**(1/3))
@@ -122,7 +122,7 @@ def multishockAl_performance(row):
 def multishockHybrid_performance(row):
     '''
     Hybrid multi-shock shield with two Nextel bumpers, an aluminium bumper, and
-    an aluminium rear wall
+    an aluminium rear wall 
     Eq. 4-62 through 4-64 from [2] 
     '''
 
@@ -160,13 +160,18 @@ def multishockHybrid_performance(row):
 ## run the code to calculate critical diameter and generate ballistic limit curve
 if __name__ == "__main__":
 
-    from datetime import datetime
+    if __package__:
+        from .results_utils import create_run_directory, write_config_csv
+    else:
+        from results_utils import create_run_directory, write_config_csv
 
     try:        
         ## import the analysis details
         root_dir = os.getcwd()
         filename = sys.argv[1]
         df_data = pd.read_csv(filename,skiprows=[1])
+
+        df_config = df_data.copy()
 
         ## convert units
         df_data['wall_yield'] *= 0.145038  # units = ksi        
@@ -177,27 +182,21 @@ if __name__ == "__main__":
         df_plot['velocity'] = velocities
         if df_plot.iloc[0]['type'] == 'nextel':
             df_plot['dc_BLE'] = df_plot.apply(multishockNextel_performance,axis=1)
-        if df_plot.iloc[0]['type'] == 'kevlar':
+        elif df_plot.iloc[0]['type'] == 'kevlar':
             df_plot['dc_BLE'] = df_plot.apply(multishockKevlar_performance,axis=1)        
         elif df_plot.iloc[0]['type'] == 'aluminium':
             df_plot['dc_BLE'] = df_plot.apply(multishockAl_performance,axis=1)
         elif df_plot.iloc[0]['type'] == 'hybrid':
             df_plot['dc_BLE'] = df_plot.apply(multishockHybrid_performance,axis=1)
-        
-        ## Get the current date and time
-        now = datetime.now()
-        now_str = now.strftime("%Y%m%d_%H%M%S")
-        
-        ## save the plot data to file
-        # Check if the "results" directory exists, and create it if it doesn't
-        results_dir = os.path.join(root_dir, "results")
-        if not os.path.exists(results_dir):
-            os.makedirs(results_dir)    
+        else:
+            raise ValueError(f"Unknown multishock shield type: {df_plot.iloc[0]['type']}")
+
+        results_dir, now_str = create_run_directory(root_dir)
         df_results = df_plot[['velocity', 'dc_BLE']] 
-        df_results.to_csv(os.path.join(root_dir,"results",f"blc_data_{now_str}.csv"), index=False)     
+        df_results.to_csv(results_dir / f"blc_data_{now_str}.csv", index=False)
 
         ## save the configuration to file (for file name consistency)
-        df_data.to_csv(os.path.join(root_dir,"results",f"config_data_{now_str}.csv"), index=False)    
+        write_config_csv(df_config, results_dir / f"config_data_{now_str}.csv", input_file=filename)
 
         ## plot the results
         plt.figure()
@@ -209,15 +208,17 @@ if __name__ == "__main__":
         # plt.show()
         
         ## Save the plot
-        plt.savefig(os.path.join(root_dir,'results',f'plot_{now_str}.png'))
+        plt.savefig(results_dir / f'plot_{now_str}.png')
 
         ## Print completion statements
+        print(f"Results directory: {results_dir}")
         print(f"Ballistic limit plot saved to file: plot_{now_str}.png")
         print(f"Ballistic limit curve data saved to file: blc_data_{now_str}.csv")
         print(f"Configuration data saved to file: config_data_{now_str}.csv")             
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {e}", file=sys.stderr)
+        raise SystemExit(1) from e
 
     finally:
         # Code to clean up resources here

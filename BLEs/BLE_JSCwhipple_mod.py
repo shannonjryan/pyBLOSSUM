@@ -1,15 +1,19 @@
 import numpy as np
-from scipy.optimize import fmin_slsqp
+if __package__:
+    from .solver_utils import checked_slsqp, positive_scalar, solve_once
+    from .curve_utils import solver_whipple_curve
+else:  # Direct CLI execution and GUI imports from the BLEs directory
+    from solver_utils import checked_slsqp, positive_scalar, solve_once
+    from curve_utils import solver_whipple_curve
 import pandas as pd
 import os
 import seaborn as sns
 from matplotlib import pyplot as plt
-import warnings
 import argparse
+import sys
 
 plt.close('all')
 sns.set_theme()
-warnings.filterwarnings("ignore", category=RuntimeWarning)  ## supress runtime warnings
 
 
 
@@ -28,14 +32,22 @@ in NASA/TM-2015-218780
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-def modJSCwhipple_performance(row):
+def impact_angle_rad(angle_deg):
+    return np.deg2rad(min(angle_deg, 65))
+
+
+def hvi_transition_velocity(angle_deg):
+    return 7/np.cos(impact_angle_rad(angle_deg))
+
+
+def modJSCwhipple_performance(row, *, solver_cache=None):
     '''
-    Function to calculate the critical projectile diameter using the JSC Whipple shield performance BLE
+    Function to calculate the critical projectile diameter using the JSC Whipple shield performance BLE.
+    Pass a fresh solver_cache dictionary when evaluating a velocity curve.
     '''    
 
      ## define the obliquity limit and convert to radians
-    angledeg = 65 if row['angle'] > 65 else row['angle']
-    anglerad = np.deg2rad(angledeg)
+    anglerad = impact_angle_rad(row['angle'])
 
     ## account for the presence of MLI
     if row['S_MLI'] > 0:  # internal MLI
@@ -50,7 +62,7 @@ def modJSCwhipple_performance(row):
             tb_tot = row['bumper_thick']+K_MLI*row['AD_MLI']/rho_ref
         else:
             tb_tot = row['bumper_thick']
-        vLV = vLV_solve_piek(tb_tot,row['wall_thick'],row['proj_density'],row['wall_yield'],anglerad)/np.cos(anglerad)
+        vLV = solve_once(solver_cache,vLV_solve_piek,tb_tot,row['wall_thick'],row['proj_density'],row['wall_yield'],anglerad)/np.cos(anglerad)
         delta_dcHV = 0
 
     ## define the velocity regime transitions
@@ -58,31 +70,53 @@ def modJSCwhipple_performance(row):
 
     ## calculate the ballistic limit
     if row['velocity'] <= vLV:  # low velocity regime
-        dc = ((row['wall_thick']*(row['wall_yield']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*row['velocity']**(2/3)))**(18/19)
+        dc = ((row['wall_thick']*(row['wall_yield']/40)**0.5+tb_tot)/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*row['velocity']**(2/3)))**(18/19)
     elif row['velocity'] >= vHV:  # hypervelocity regime
-        dc = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yield'],row['proj_density'],row['bumper_density'],anglerad,row['velocity']) + delta_dcHV
+        dc = dc_HV(tb_tot,row['wall_thick'],row['standoff'],row['wall_yield'],row['proj_density'],row['bumper_density'],anglerad,row['velocity']) + delta_dcHV
     else:  # shatter regime
-        dcLV = ((row['wall_thick']*(row['wall_yield']/40)**0.5+row['bumper_thick'])/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*vLV**(2/3)))**(18/19)
-        dcHV = dc_HV(row['bumper_thick'],row['wall_thick'],row['standoff'],row['wall_yield'],row['proj_density'],row['bumper_density'],anglerad,vHV) + delta_dcHV
+        dcLV = ((row['wall_thick']*(row['wall_yield']/40)**0.5+tb_tot)/(0.6*(np.cos(anglerad))**(5/3)*row['proj_density']**0.5*vLV**(2/3)))**(18/19)
+        dcHV = solve_once(solver_cache,dc_HV,tb_tot,row['wall_thick'],row['standoff'],row['wall_yield'],row['proj_density'],row['bumper_density'],anglerad,vHV) + delta_dcHV
         dc = dcLV+(dcHV-dcLV)/(vHV-vLV)*(row['velocity']-vLV)    
 
     return dc
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+def modJSCwhipple_curve(config, velocities):
+    """Return a float NumPy curve for one configuration (wall_yield in ksi)."""
+    def high(tb, tw, standoff, sigy, rhop, rhob, angle, v, v_hv):
+        return dc_HV(tb, tw, standoff, sigy, rhop, rhob, angle, v)
+
+    return solver_whipple_curve(config, velocities, vLV_solve_piek, high, angle_rule=impact_angle_rad)
+
+
 def vLV_solve_piek(tb,tw,rhop,sigyksi,anglerad):
     '''
     Function to calculate the low-to-shatter regime transition velocity
     '''    
       
-    func = lambda x: np.sqrt(((tb/(x/1.436)**(1/3))**2-\
-          (((tw*(sigyksi/40)**0.5+tb)/(0.6*(np.cos(anglerad))**(5/3)*rhop**0.5*np.abs(x)**(2/3)))**(18/19))**2)**2)
-            
-    vLV = fmin_slsqp(func,3.0, bounds=[(1.854,50.0)],disp=False)[0]
+    def diameters(x):
+        left = tb/(x/1.436)**(1/3)
+        right = ((tw*(sigyksi/40)**0.5+tb)/(0.6*np.cos(anglerad)**(5/3)*rhop**0.5*np.abs(x)**(2/3)))**(18/19)
+        return left, right
+
+    def func(x):
+        left, right = diameters(x)
+        return np.abs(left**2-right**2)
+
+    # The original piecewise rule returns 2.60 for the capped branch; its
+    # intermediate minimizer need not be a root of the uncapped equation.
+    def residual_required(x):
+        dp = diameters(x)[0]
+        return tb/dp < 0.16
+
+    vLV = checked_slsqp(func, 3.0, diameters, bounds=[(1.854, 50.0)],
+                       context="Modified JSC Whipple transition velocity",
+                       residual_required=residual_required)
     dpLV = tb/(vLV/1.436)**(1/3)
     v1 = 2.60 if (tb/dpLV) >= 0.16 else 1.436*(tb/dpLV)**(-1/3)
 
-    return v1
+    return positive_scalar(v1, context="Modified JSC Whipple derived transition velocity")
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,10 +125,17 @@ def dc_HV(tb,tw,S,sigyksi,rhop,rhob,anglerad,v):
     Function to calculate critical projectile diameter in the hypervelocity regime
     """
     
-    func = lambda x: (x-F2star(S,x,tb,anglerad,rhop,rhob,sigyksi,v)**(-2/3)*\
-              (3.918*tw**(2/3)*S**(1/3)*(sigyksi/70)**(1/3))/(rhop**(1/3)*rhob**(1/9)*(v*np.cos(anglerad))**(2/3)))**2
+    def diameters(x):
+        right = F2star(S,x,tb,anglerad,rhop,rhob,sigyksi,v)**(-2/3)*\
+              (3.918*tw**(2/3)*S**(1/3)*(sigyksi/70)**(1/3))/(rhop**(1/3)*rhob**(1/9)*(v*np.cos(anglerad))**(2/3))
+        return x, right
+
+    def func(x):
+        left, right = diameters(x)
+        return (left-right)**2
     dp0 = 3.918*tw**(2/3)*S**(1/3)*(sigyksi/70)**(1/3)/(rhop**(1/3)*rhob**(1/9)*(v*np.cos(anglerad))**(2/3))
-    dc = fmin_slsqp(func,dp0,disp=False)[0]
+    dc = checked_slsqp(func, dp0, diameters,
+                      context=f"Modified JSC Whipple hypervelocity diameter at {v:g} km/s")
        
     return dc
 
@@ -128,7 +169,10 @@ def F2star(S,dp,tb,anglerad,rhop,rhob,sigyksi,V):
 ## run the code to calculate ballistic limit curves for a specific configuration
 if __name__ == "__main__":
 
-    from datetime import datetime
+    if __package__:
+        from .results_utils import create_run_directory, write_config_csv
+    else:
+        from results_utils import create_run_directory, write_config_csv
 
     ## Create the parser
     parser = argparse.ArgumentParser(description='Process analysis inputs and flags.')
@@ -146,29 +190,24 @@ if __name__ == "__main__":
         filename = args.filename
         df_data = pd.read_csv(filename,skiprows=[1])   
 
+        df_config = df_data.copy()
+
         ## convert units
         df_data['wall_yield'] *= 0.145038  # units = ksi        
             
         ## generate ballistic limit curves
         velocities = np.linspace(0.1,15,150)
-        df_plot = pd.DataFrame(np.repeat(df_data.values, len(velocities), axis=0), columns=df_data.columns)  # takes the first row of the imported dataframe and duplicates it to match the size of the 'velocities' vector
-        df_plot['velocity'] = velocities
-        df_plot['dc_BLE-JSCwhipple_mod'] = df_plot.apply(modJSCwhipple_performance,axis=1)
+        if len(df_data) != 1:
+            raise ValueError("Expected exactly one shield configuration in the input CSV.")
+        df_plot = pd.DataFrame({'velocity': velocities,
+                                'dc_BLE-JSCwhipple_mod': modJSCwhipple_curve(df_data.iloc[0], velocities)})
         
-        ## Get the current date and time
-        now = datetime.now()
-        now_str = now.strftime("%Y%m%d_%H%M%S")
-        
-        ## save the plot data to file
-        # Check if the "results" directory exists, and create it if it doesn't
-        results_dir = os.path.join(root_dir, "results")
-        if not os.path.exists(results_dir):
-            os.makedirs(results_dir)    
+        results_dir, now_str = create_run_directory(root_dir)
         df_results = df_plot[['velocity', 'dc_BLE-JSCwhipple_mod']] 
-        df_results.to_csv(os.path.join(root_dir,"results",f"blc_data_{now_str}.csv"), index=False)     
+        df_results.to_csv(results_dir / f"blc_data_{now_str}.csv", index=False)
 
         ## save the configuration to file (for file name consistency)
-        df_data.to_csv(os.path.join(root_dir,"results",f"config_data_{now_str}.csv"), index=False) 
+        write_config_csv(df_config, results_dir / f"config_data_{now_str}.csv", input_file=filename)
 
         ## plot the results
         plt.figure()
@@ -199,22 +238,24 @@ if __name__ == "__main__":
             df_P = df_filtered_test_data[df_filtered_test_data['perforated_class'] == 1]
             plt.scatter(df_NP['velocity'],df_NP['proj_diam'],edgecolors='black',facecolors='black',label='NP')
             plt.scatter(df_P['velocity'],df_P['proj_diam'],edgecolors='black',facecolors='white',label='P')
-            df_filtered_test_data.to_csv(os.path.join(root_dir,"results",f"test_data_{now_str}.csv"), index=False) 
+            df_filtered_test_data.to_csv(results_dir / f"test_data_{now_str}.csv", index=False)
 
         plt.ylim(0.0,2.0*df_plot['dc_BLE-JSCwhipple_mod'][len(velocities)/2])
         plt.legend()
         # plt.show()
             
         ## Save the plot
-        plt.savefig(os.path.join(root_dir,'results',f'plot_{now_str}.png'))
+        plt.savefig(results_dir / f'plot_{now_str}.png')
 
         ## Print completion statements
+        print(f"Results directory: {results_dir}")
         print(f"Ballistic limit plot saved to file: plot_{now_str}.png")
         print(f"Ballistic limit curve data saved to file: blc_data_{now_str}.csv")
         print(f"Configuration data saved to file: config_data_{now_str}.csv")        
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {e}", file=sys.stderr)
+        raise SystemExit(1) from e
 
     finally:
         # Code to clean up resources here

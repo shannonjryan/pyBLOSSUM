@@ -64,7 +64,14 @@ For example,
 ```
 python BLEs\BLE_foamSP.py input_files\eval_example-foamSP.csv
 ```
-will perform an evaluation on the foam sandwich panel defined in the 'eval_example-foamSP.csv' input file using the foam sandwich panel BLE. Example input files for each target configuration are provided in the 'input_files' directory. The fields (i.e., column headers) in these input files are needed for the BLE analysis, so should not be changed.
+This evaluates the foam sandwich panel defined in `eval_example-foamSP.csv`.
+Use the matching example in `input_files/` as a template for each target
+configuration. Keep the column headers on the first row and the units on the
+second row, then enter the configuration values on the third row. The scripts
+use the units shown in the examples when interpreting the input values.
+
+If a BLE command fails, it prints an error to standard error and exits with a
+nonzero status.
 
 To include experimental data in the generated plots, include the flag --data, e.g.,
 ```
@@ -72,13 +79,55 @@ python BLEs\BLE_foamSP.py input_files\eval_example-foamSP.csv --data
 ```
 
 ## Output
-Irrespective of how pyBLOSSUM is run, the output is the same, consisting of three files saved to the 'results' directory:
-1. A png-format ballistic limit plot with the filename *plot_<date_time>.png*
-2. A csv-format datafile containing the data plotted in the ballistic limit curve with the filename *blc_data_<date_time>.csv*
-3. A csv-format datafile containing the inputs used to generate the ballistic limit curve with the filename *config_data_<date_time>.csv*.
+Each command-line analysis saves its outputs together in a new folder under
+`results/`, named `run_YYYYMMDD_HHMMSS_ffffff`. The command prints the folder path.
+The GUI displays the plot and lets you choose which files to save. **Save plot**
+writes the PNG, and **Save data** writes the curve and configuration CSVs. If
+you select either option, the GUI creates one run folder for the saved files.
 
-The <date_time> is a date-time string is used to identify related plots, plot data, and configuration data files.
+- `plot_<date_time>.png` contains the ballistic limit plot.
+- `blc_data_<date_time>.csv` contains the velocity and critical projectile diameter values used in the plot.
+- `config_data_<date_time>.csv` contains the configuration with the units on the second row. Values are written in the input units, such as MPa for wall yield strength.
+- `test_data_<date_time>.csv` contains the experimental points when a supported analysis includes experimental data and saves the CSVs.
 
+Files from the same run share a timestamp.
+
+
+## Tests and validation curves
+
+Run the targeted tests after a code change:
+
+```console
+python -B -m unittest discover -s validation/tests -v
+```
+
+Evaluate the JSON configurations against Git-commit pyBLOSSUM reference curves
+and independent XLSX reference curves:
+
+```console
+python -B validation/validate_curves.py
+```
+
+Open the printed `index.html` report for pass/fail results, curve overlays,
+relative-error plots, and per-point CSV data. Every run creates a new directory
+under `validation/reports/`, which is excluded from Git. The runner reads the
+reference workbooks without changing them or recalculating their stored values.
+Commit snapshots are captured automatically and reused. Uncommitted model or
+configuration edits compare against HEAD; committed code compares against
+HEAD's first parent. No separate baseline-update command is needed.
+
+To explicitly use committed workbooks (for example when a OneDrive file is
+unavailable locally), run:
+
+```console
+python -B validation/validate_curves.py --git-ref HEAD
+```
+
+This still uses the current Python code, JSON configurations, automatic commit
+baselines, and tolerance definitions.
+A failed comparison or unreadable reference returns a nonzero exit code.
+See [validation/README.md](validation/README.md) for coverage, tolerances, report
+details, and how to investigate failures.
 
 ## License
 This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md) for details.

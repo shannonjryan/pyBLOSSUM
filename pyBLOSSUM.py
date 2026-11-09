@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLabel, QPushButton, QSpacerItem, QSizePolicy
-from PyQt5.QtGui import QCursor
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QLabel, QPushButton, QSpacerItem, QSizePolicy, QMessageBox
+from PyQt5.QtCore import Qt, QTimer
+from importlib import import_module
 import sys
-import subprocess
-import os
-import time
+
+from src.gui_support import warm_analysis_libraries
 
 class MyApp(QWidget):
     def __init__(self):
@@ -45,17 +44,17 @@ class MyApp(QWidget):
         self.analyse_button_layout.addWidget(self.analyse_button)
         self.layout.addLayout(self.analyse_button_layout)
 
-        ## Map configurations to scripts
-        self.configuration_to_script = {
-            "Whipple shield": "GUI_whipple.py",
-            "Sandwich panel": "GUI_sandwichPanel.py",
-            "Triple wall": "GUI_tripleWall.py",
-            "Stuffed Whipple shield": "GUI_stuffedWhipple.py",
-            "Mesh double-bumper": "GUI_meshDB.py",
-            "Multi-shock": "GUI_multishock.py",
-            "Enhanced MLI": "GUI_enhancedMLI.py",
-            "Opaque": "GUI_singleWall.py",
-            "Transparent": "GUI_transparent.py",
+        self.analysis_windows = set()
+        self.configuration_to_module = {
+            "Whipple shield": "src.GUI_whipple",
+            "Sandwich panel": "src.GUI_sandwichPanel",
+            "Triple wall": "src.GUI_tripleWall",
+            "Stuffed Whipple shield": "src.GUI_stuffedWhipple",
+            "Mesh double-bumper": "src.GUI_meshDB",
+            "Multi-shock": "src.GUI_multishock",
+            "Enhanced MLI": "src.GUI_enhancedMLI",
+            "Opaque": "src.GUI_singleWall",
+            "Transparent": "src.GUI_transparent",
         }
 
     def on_shield_type_selected(self, index):
@@ -76,34 +75,29 @@ class MyApp(QWidget):
             self.configuration_dropdown.addItems(["Enhanced MLI"])
 
     def on_analyse_button_clicked(self):
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))  # use busy cursor
-
         selected_configuration = self.configuration_dropdown.currentText()
 
-        ## Start the corresponding script
-        script = self.configuration_to_script[selected_configuration]
-        current_file_path = os.path.abspath(__file__)
-        current_directory = os.path.dirname(current_file_path)
-        script_path = os.path.join(current_directory,'src', script)
-
-        ## Launch the subprocess
-        process = subprocess.Popen(["python", script_path],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)  
-        process.wait()  # Wait for the subprocess to complete
-        QApplication.restoreOverrideCursor()  # restore default cursor
+        try:
+            module = import_module(self.configuration_to_module[selected_configuration])
+            window = module.MyApp()
+        except (ImportError, OSError, ValueError, KeyError) as error:
+            QMessageBox.critical(self, "Launch error", f"Could not open the analysis window.\n{error}")
+            return
+        window.setAttribute(Qt.WA_DeleteOnClose)
+        self.analysis_windows.add(window)
+        window.destroyed.connect(lambda: self.analysis_windows.discard(window))
+        window.show()
 
 ## ------------------------------------------------- ##
 # Run the application
 ## ------------------------------------------------- ##      
 if __name__ == "__main__":
     try:
-        # Your code here
         app = QApplication(sys.argv)
         window = MyApp()
         window.show()
+        QTimer.singleShot(0, warm_analysis_libraries)
         sys.exit(app.exec_())
     except Exception as e:
         # Handle exception
         print(f"An error occurred: {e}")
-    finally:
-        # This code will run whether an exception occurred or not
-        os.system('reset')

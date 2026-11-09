@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 import argparse
+import sys
 from matplotlib import pyplot as plt
 import seaborn as sns
 import warnings
@@ -153,7 +154,10 @@ def SRL_triple_performance(row):
 ## run the code to calculate critical diameter and generate ballistic limit curve
 if __name__ == "__main__":
 
-    from datetime import datetime
+    if __package__:
+        from .results_utils import create_run_directory, write_config_csv
+    else:
+        from results_utils import create_run_directory, write_config_csv
 
     ## Create the parser
     parser = argparse.ArgumentParser(description='Process analysis inputs and flags.')
@@ -171,6 +175,8 @@ if __name__ == "__main__":
         filename = args.filename
         df_data = pd.read_csv(filename,skiprows=[1])
 
+        df_config = df_data.copy()
+
         ## convert units
         df_data['wall_yield'] *= 0.145038  # units = ksi        
         
@@ -183,20 +189,12 @@ if __name__ == "__main__":
         elif df_plot.iloc[0]['type'] == 'triple':
             df_plot['dc_BLE'] = df_plot.apply(SRL_triple_performance,axis=1)
         
-        ## Get the current date and time
-        now = datetime.now()
-        now_str = now.strftime("%Y%m%d_%H%M%S")
-        
-        ## save the plot data to file
-        # Check if the "results" directory exists, and create it if it doesn't
-        results_dir = os.path.join(root_dir, "results")
-        if not os.path.exists(results_dir):
-            os.makedirs(results_dir)  
+        results_dir, now_str = create_run_directory(root_dir)
         df_results = df_plot[['velocity', 'dc_BLE']] 
-        df_results.to_csv(os.path.join(root_dir,"results",f"blc_data_{now_str}.csv"), index=False)     
+        df_results.to_csv(results_dir / f"blc_data_{now_str}.csv", index=False)
 
         ## save the configuration to file (for file name consistency)
-        df_data.to_csv(os.path.join(root_dir,"results",f"config_data_{now_str}.csv"), index=False)    
+        write_config_csv(df_config, results_dir / f"config_data_{now_str}.csv", input_file=filename)
         
         ## plot the results
         plt.figure()
@@ -227,22 +225,24 @@ if __name__ == "__main__":
             df_P = df_filtered_test_data[df_filtered_test_data['perforated_class'] == 1]
             plt.scatter(df_NP['velocity'],df_NP['proj_diam'],edgecolors='black',facecolors='black',label='NP')
             plt.scatter(df_P['velocity'],df_P['proj_diam'],edgecolors='black',facecolors='white',label='P')
-            df_filtered_test_data.to_csv(os.path.join(root_dir,"results",f"test_data_{now_str}.csv"), index=False) 
+            df_filtered_test_data.to_csv(results_dir / f"test_data_{now_str}.csv", index=False)
 
         plt.ylim(0.0,2.0*df_plot['dc_BLE'][len(velocities)/2])
         plt.legend()
         # plt.show()
         
         ## Save the plot
-        plt.savefig(os.path.join(root_dir,'results',f'plot_{now_str}.png'))
+        plt.savefig(results_dir / f'plot_{now_str}.png')
 
         ## Print completion statements
+        print(f"Results directory: {results_dir}")
         print(f"Ballistic limit plot saved to file: plot_{now_str}.png")
         print(f"Ballistic limit curve data saved to file: blc_data_{now_str}.csv")
         print(f"Configuration data saved to file: config_data_{now_str}.csv")         
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {e}", file=sys.stderr)
+        raise SystemExit(1) from e
 
     finally:
         # Code to clean up resources here

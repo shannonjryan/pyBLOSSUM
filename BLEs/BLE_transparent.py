@@ -64,16 +64,16 @@ def transparent_performance(row):
 ## run the code to calculate critical diameter and generate ballistic limit curve
 if __name__ == "__main__":
 
-    from datetime import datetime
+    if __package__:
+        from .results_utils import create_run_directory, write_config_csv
+    else:
+        from results_utils import create_run_directory, write_config_csv
 
     try:        
         ## import the analysis details
         root_dir = os.getcwd()
         filename = sys.argv[1]
-        df_data = pd.read_csv(filename,skiprows=[1])
-
-        ## convert units
-        df_data['wall_yield'] *= 0.145038  # units = ksi        
+        df_data = pd.read_csv(filename,skiprows=[1])  
         
         ## generate ballistic limit curves
         velocities = np.linspace(0.1,15,150)
@@ -81,20 +81,12 @@ if __name__ == "__main__":
         df_plot['velocity'] = velocities
         df_plot['dc_BLE'] = df_plot.apply(transparent_performance,axis=1)
         
-        ## Get the current date and time
-        now = datetime.now()
-        now_str = now.strftime("%Y%m%d_%H%M%S")
-        
-        ## save the plot data to file
-        # Check if the "results" directory exists, and create it if it doesn't
-        results_dir = os.path.join(root_dir, "results")
-        if not os.path.exists(results_dir):
-            os.makedirs(results_dir)    
+        results_dir, now_str = create_run_directory(root_dir)
         df_results = df_plot[['velocity', 'dc_BLE']] 
-        df_results.to_csv(os.path.join(root_dir,"results",f"blc_data_{now_str}.csv"), index=False)     
+        df_results.to_csv(results_dir / f"blc_data_{now_str}.csv", index=False)
 
         ## save the configuration to file (for file name consistency)
-        df_data.to_csv(os.path.join(root_dir,"results",f"config_data_{now_str}.csv"), index=False)    
+        write_config_csv(df_data, results_dir / f"config_data_{now_str}.csv", input_file=filename)
         
         ## plot the results
         plt.figure()
@@ -106,15 +98,17 @@ if __name__ == "__main__":
         # plt.show()
         
         ## Save the plot
-        plt.savefig(os.path.join(root_dir,'results',f'plot_{now_str}.png'))
+        plt.savefig(results_dir / f'plot_{now_str}.png')
 
         ## Print completion statements
+        print(f"Results directory: {results_dir}")
         print(f"Ballistic limit plot saved to file: plot_{now_str}.png")
         print(f"Ballistic limit curve data saved to file: blc_data_{now_str}.csv")
         print(f"Configuration data saved to file: config_data_{now_str}.csv")               
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {e}", file=sys.stderr)
+        raise SystemExit(1) from e
 
     finally:
         # Code to clean up resources here

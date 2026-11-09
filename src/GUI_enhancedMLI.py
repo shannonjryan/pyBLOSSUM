@@ -1,87 +1,16 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QDialog, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QComboBox, QLineEdit, QGroupBox, QPushButton, QMessageBox, QCheckBox, QFrame, QListWidget, QAbstractItemView
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtWidgets import QWidget, QDialog, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QComboBox, QLineEdit, QGroupBox, QPushButton, QMessageBox, QCheckBox, QFrame, QListWidget, QAbstractItemView
+from functools import cached_property
 import sys
 import os
-import pandas as pd
+# Make the same package imports available when this file is run directly.
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if not __package__:
+    sys.path.insert(0, root_dir)
 
-## Add the BLE directory to the path
-current_file_path = os.path.abspath(__file__)
-current_directory = os.path.dirname(current_file_path)
-sys.path.insert(0, os.path.join(os.path.dirname(current_directory),'BLEs'))
+from BLEs.results_utils import create_run_directory, write_config_csv
+from src.gui_support import material_properties, run_standalone, warm_analysis_libraries
 
-## Set some defaults
-root_dir = os.path.dirname(current_directory)
 
-## ------------------------------------------------- ##
-# Worker thread for data loading
-## ------------------------------------------------- ##
-class DataLoader(QThread):
-    data_loaded = pyqtSignal(pd.DataFrame)
-
-    ## load the material data on the background thread
-    def run(self):
-        filename = 'material_data.csv'
-        df_materials = pd.read_csv(os.path.join(root_dir, 'data', filename))
-        new_column_names = {
-            'Material': 'mat',
-            'Density (g/ccm)': 'density',
-            'Hardness (HB)': 'hardness',
-            'Yield strength (Mpa)': 'yield',
-            'Elongation (%)': 'elongation',
-            'Tensile modulus (Gpa)': 'tensile_modulus',
-            'Shear modulus (Gpa)': 'shear_modulus',
-            'Shear strength (Mpa)': 'shear_strength',
-            'Specific heat (J/kg.K)': 'specific_heat',
-            'Melting temperature (K)': 'melting_temp'
-        }
-        df_materials.rename(columns=new_column_names, inplace=True)
-        self.data_loaded.emit(df_materials)
-
-## ------------------------------------------------- ##
-# Worker thread for package loading
-## ------------------------------------------------- ##
-class PackageLoader(QThread):
-    packages_loaded = pyqtSignal(object)
-
-    def run(self):
-
-        ## Load additional packages
-        import numpy as np
-        from datetime import datetime
-        import matplotlib.pyplot as plt
-        from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-        from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
-        from matplotlib.figure import Figure
-        import seaborn as sns
-        import itertools
-
-        ## Define the plot characteristics
-        sns.set_theme()
-        colors = sns.color_palette()
-        line_styles = ['-', '--', '-.', ':',(0,(3,1,1,1,1)),(0,(3,5,1,5,1,5))]
-        color_line_style_pairs = list(zip(colors, line_styles))
-
-        ## Load the ballistic limit scripts
-        from BLE_MLI import mli_performance
-
-        ## Emit the loaded packages
-        self.packages_loaded.emit({
-            'np': np,
-            'datetime': datetime,
-            'plt': plt,
-            'FigureCanvas': FigureCanvas,
-            'NavigationToolbar': NavigationToolbar,
-            'Figure': Figure,
-            'sns': sns,
-            'itertools': itertools,
-            'pd': pd,
-            'color_line_style_pairs': color_line_style_pairs,
-            'mli_performance': mli_performance
-        })
-
-## ------------------------------------------------- ##
-# Define the plot window
-## ------------------------------------------------- ##
 class PlotWindow(QDialog):
     def __init__(self, parent=None):
         super(PlotWindow, self).__init__(parent)
@@ -113,23 +42,18 @@ class PlotWindow(QDialog):
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
+        self.materials = material_properties(root_dir)
         self.initUI()
 
-        ## Start the DataLoader thread
-        self.data_loader = DataLoader()
-        self.data_loader.data_loaded.connect(self.on_data_loaded)
-        self.data_loader.start()
+    @cached_property
+    def packages(self):
+        packages = warm_analysis_libraries().result()
+        from BLEs.BLE_MLI import mli_performance
 
-        ## Start the PackageLoader thread
-        self.package_loader = PackageLoader()
-        self.package_loader.packages_loaded.connect(self.on_packages_loaded)
-        self.package_loader.start()
-
-    def on_data_loaded(self, df_materials):
-        self.df_materials = df_materials
-
-    def on_packages_loaded(self, packages):
-        self.packages = packages
+        return {
+            **packages,
+            'mli_performance': mli_performance,
+        }
 
     def initUI(self):
         self.layout = QVBoxLayout(self)
@@ -191,7 +115,6 @@ class MyApp(QWidget):
         self.frame1_layout.addWidget(self.density0_label, 1, 0)
         self.density0_entry = QLineEdit(self)
         self.density0_entry.setFixedWidth(widget_width)
-        # self.density0_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_proj_mat, 'density'].values[0]))
         self.density0_entry.setText("2.8")
         self.frame1_layout.addWidget(self.density0_entry, 1, 1)
 
@@ -248,11 +171,10 @@ class MyApp(QWidget):
         self.wallThickness_entry.setFixedWidth(widget_width)        
         self.frame2_layout.addWidget(self.wallThickness_entry, 5, 1)
         
-        self.density1_label = QLabel("Wall density (g/cm³)):", self)
+        self.density1_label = QLabel("Wall density (g/cm³):", self)
         self.frame2_layout.addWidget(self.density1_label, 6, 0)
         self.density1_entry = QLineEdit(self)
         self.density1_entry.setFixedWidth(widget_width)
-        # self.density1_entry.setText(str(df_materials.loc[df_materials['mat'] == self.initial_target_mat, 'density'].values[0]))
         self.density1_entry.setText("2.7")
         self.frame2_layout.addWidget(self.density1_entry, 6, 1)
 
@@ -290,13 +212,13 @@ class MyApp(QWidget):
     ## ------------------------------------------------- ##
     def on_material0_selected(self, index):
         selected_material = self.material0_dropdown.itemText(index)
-        density = self.df_materials.loc[self.df_materials['mat'] == selected_material, 'density'].values[0]
+        density = self.materials[selected_material]['density']
         self.density0_entry.setText(str(density))
 
     ## ------------------------------------------------- ##
     def on_material1_selected(self, index):
         selected_material = self.material0_dropdown.itemText(index)
-        self.density1_entry.setText(str(self.df_materials.loc[self.df_materials['mat'] == selected_material, 'density'].values[0]))       
+        self.density1_entry.setText(self.materials[selected_material]['density'])
 
     ## ------------------------------------------------- ##
     def on_target_type_selected(self, index):
@@ -319,10 +241,9 @@ class MyApp(QWidget):
 
     ## ------------------------------------------------- ##
     def on_run_button_clicked(self):
-
-        color_line_style_cycler = self.packages['itertools'].cycle(self.packages['color_line_style_pairs'])
-
         try:
+            pd = self.packages['pd']
+            color_line_style_cycler = self.packages['itertools'].cycle(self.packages['color_line_style_pairs'])
             # Check if the wall AD and thickness are directly specified, if not calculate them
             if self.wallAD_entry.text() == "":
                 self.wallAD_entry.setText("{:.2f}".format(float(self.wallThickness_entry.text())*float(self.density1_entry.text())))
@@ -369,10 +290,6 @@ class MyApp(QWidget):
 
             df = pd.DataFrame([data])    
 
-            ## Get the current date and time (for saving output)
-            now = self.packages['datetime'].now()
-            now_str = now.strftime("%Y%m%d_%H%M%S")
-
             ## Create a plot window
             self.plot_window = PlotWindow()
 
@@ -404,39 +321,25 @@ class MyApp(QWidget):
             self.plot_window.show()
 
             ## If the save_plot_checkbox is checked, save the plot
-            if self.save_plot_checkbox.isChecked():
-                ## Check if the "results" directory exists, and create it if it doesn't
-                results_dir = os.path.join(root_dir, "results")
-                if not os.path.exists(results_dir):
-                    os.makedirs(results_dir)
+            save_plot = self.save_plot_checkbox.isChecked()
+            save_data = self.save_data_checkbox.isChecked()
+            if save_plot or save_data:
+                results_dir, now_str = create_run_directory(root_dir)
 
+            if save_plot:
                 ## Save the plot
-                self.plot_window.figure.savefig(os.path.join(root_dir,"results",f"plot_{now_str}.png"))
+                self.plot_window.figure.savefig(results_dir / f"plot_{now_str}.png")
 
             ## If the save_data_checkbox is checked, save the velocity and critical diameter data, as well as config data
-            if self.save_data_checkbox.isChecked():
-                ## Check if the "results" directory exists, and create it if it doesn't
-                results_dir = os.path.join(root_dir, "results")
-                if not os.path.exists(results_dir):
-                    os.makedirs(results_dir)
-
-                df_results.to_csv(os.path.join(root_dir,"results",f"blc_data_{now_str}.csv"), index=False)     
-                df_config.to_csv(os.path.join(root_dir,"results",f"config_data_{now_str}.csv"), index=False)                 
+            if save_data:
+                df_results.to_csv(results_dir / f"blc_data_{now_str}.csv", index=False)
+                write_config_csv(df_config, results_dir / f"config_data_{now_str}.csv")
         
-        except ValueError as e:
-            QMessageBox.critical(self, "Error", e.args[0])     
+        except (ImportError, ValueError, OSError) as e:
+            QMessageBox.critical(self, "Error", str(e))
         
 ## ------------------------------------------------- ##
 # Run the application
 ## ------------------------------------------------- ##            
-try:
-    app = QApplication(sys.argv)
-    window = MyApp()
-    window.show()
-    sys.exit(app.exec_())
-except Exception as e:
-    # Handle exception
-    print(f"An error occurred: {e}")
-finally:
-    # This code will run whether an exception occurred or not
-    os.system('reset')
+if __name__ == "__main__":
+    sys.exit(run_standalone(MyApp))
