@@ -30,6 +30,13 @@ Experimental datasets are provided in the 'data' directory for the following shi
 
 Test results from those datasets can be plotted together with the ballistic limit curves. For example, if you define a Whipple shield configuration that is nominally identical (or very similar) to one in the experimental dataset, then the corresponding experiments can be included in your generated ballistic limit curve. 
 
+## Contributing experimental data
+New hypervelocity impact test results and corrections to existing records are welcome.
+
+- **Suggest new data.** Open a GitHub issue with the paper, report, or dataset citation, the shielding configuration, and the table or page containing the results. A DOI, URL, or report number helps us locate the source.
+- **Report a correction.** Include the CSV filename, the source and shot ID, the current and proposed values, and the source that supports the change.
+- **Submit a pull request.** Update the relevant CSV in `data/`, following its existing column names and units. If you’re adding a new source, include it in `data/data_sources.bib` and use its citation key in the CSV. Reference the relevant table or page in the pull request description.
+
 ## Running pyBLOSSUM
 pyBLOSSUM can be run either as a GUI or from the command line/terminal. Depending on how you intend to run the code, the process will vary.
 
@@ -129,7 +136,11 @@ A failed comparison or unreadable reference returns a nonzero exit code.
 See [validation/README.md](validation/README.md) for coverage, tolerances, report
 details, and how to investigate failures.
 
-## License
+## License and Acknowledgements
 This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md) for details.
+
+If you use this repo or the data included in the repo for research, please cite the following paper:
+S. Ryan, "pyBLOSSUM: An open-source python repository for assessing the ballistic limit of spacecraft structures under space debris impact", International Journal of Impact Engineering; 203: 105365, 2025
+
 
 
